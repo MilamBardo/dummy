@@ -1,0 +1,17 @@
+extends layout
+
+block content
+    h1= title
+    if registrationsuccess
+        p Registration successfull.  Please now verify your account through the email you provided, and then log in.
+    else
+        p Please enter your details below to login:
+    form(name="login", action="/login", method="post")
+        label username: 
+            input(type="text", name="user")
+        label password: 
+            input(type="password", name="pass")
+        br
+        br
+        input(type="submit", value="Login")
+        a(href ="/register") Register

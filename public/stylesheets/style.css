@@ -1,0 +1,30 @@
+body {
+  padding: 10px 50px 50px 50px;
+  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+}
+
+a {
+  color: #00B7FF;
+}
+
+#main{position: relative;
+    width: 100%;}
+
+#HomeImagePane{width:80%; margin:auto; text-align: center;}
+#HomeImagePane img {border-style:  solid;
+                    border-width: 1px;
+                    border-top: none;
+                    border-bottom: none;
+                    padding-left: 10%; padding-right: 10%;}
+
+nav {width:80%;}
+nav img {margin-right:5%;}
+/*.navlinks{margin-bottom: 40px;}*/
+
+.mainblog {border:1px solid black; padding: 10px; }
+.mainblog heading {color:black; background-color: white; padding: 5px; }
+.mainblog p {color:black; background-color: white; padding: 5px; }
+
+.formpost { border: 1px solid black; padding: 20px;}
+/* .formpost textarea{width: 100px; height: 100px; max-width: 200px; max-height: 200px;} */
+.footer {width:60%; margin:auto; text-align: center;}

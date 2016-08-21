@@ -1,0 +1,12 @@
+extends layout
+
+block content
+    if loggedin && isadmin
+        a(href ="/blog/addpost") Add New Post
+        each val in posts
+            article(class="mainblog")
+                header
+                    h1= val.posttitle
+                    p
+                        time= val.postdate
+                p= val.postbody

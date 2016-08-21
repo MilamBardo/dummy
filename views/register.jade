@@ -1,0 +1,9 @@
+extends layout
+
+block content
+  h1= title
+  p Please enter your details below to register
+  form(name="register", action="/registerprocess", method="post")
+    input(type="text", name="user")
+    input(type="password", name="pass")
+    input(type="submit", value="register")
