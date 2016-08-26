@@ -1,8 +1,11 @@
 extends layout
 
 block content
+    if alertmessage
+        p(style="color: red")=alertmessage
     if loggedin && isadmin
         a(href ="/blog/addpost") Add New Post
+    if posts
         each val in posts
             article(class="mainblog")
                 header

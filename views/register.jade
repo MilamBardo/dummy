@@ -2,8 +2,25 @@ extends layout
 
 block content
   h1= title
+  if registrationmessage
+    p(style="color: red")= registrationmessage
   p Please enter your details below to register
-  form(name="register", action="/registerprocess", method="post")
-    input(type="text", name="user")
-    input(type="password", name="pass")
-    input(type="submit", value="register")
+  form(name="register", action="/registerprocess", method="post", class="formpost")
+    label Username:
+    br
+    input(type="text", name="username")
+    br
+    label Password:
+    br
+    input(type="password", name="password")
+    br
+    label Email:
+    br
+    input(type="email", name="email")
+    br
+    label Confirm Email:
+    br
+    input(type="email", name="confirmemail")
+    br
+    br
+    input(type="submit", value="register") 

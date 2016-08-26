@@ -2,19 +2,28 @@
 // /// <reference path='./node_modules/pg-promise/typescript/pg-promise.d.ts'/>
 // /// <reference path='./node_modules/pg-promise/typescript/ext-promise.d.ts'/>
 "use strict";
-const pg = require('pg');
-class dbpool {
-    constructor() {
-        this.connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
-        var config = {
-            user: 'Almos',
-            database: 'Almos',
-            password: 'Talanath5',
-            port: 5432 //env var: PGPORT
-        };
-        this.clientpool = pg.pools.getOrCreate(config);
-    }
-}
+const pgPromise = require('pg-promise');
+var options = {};
+let pgp = pgPromise(options);
+let connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
+let dbpool = pgp(connectionString);
+module.exports = { dbpool: dbpool };
+//import * as pg from 'pg';
+// class dbpool
+// {
+//     connectionString : string = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
+//     public clientpool : any;
+//     constructor()
+//     {
+//         var config = {
+//             user: 'Almos', //env var: PGUSER
+//             database: 'Almos', //env var: PGDATABASE
+//             password: 'Talanath5', //env var: PGPASSWORD
+//             port: 5432 //env var: PGPORT
+//             };
+//             this.clientpool =  pg.pools.getOrCreate(config);
+//     }
+// }
 //  import * as promise from 'bluebird';
 //  import * as pgPromise from 'pg-promise';
 // import users = require('./src/repositories/userRepository.ts');
@@ -38,5 +47,15 @@ class dbpool {
 // export = {
 //     pgp,
 //     db
-// }; 
+// };
+//import * as pgPromise from 'pg-promise';
+// export class dbpool
+// {
+//      db : pgPromise.IDatabase;
+// constructor()
+//      {
+//         var connectionString : string = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
+//         this.db = <pgPromise.IDatabase<Ext>>pgPromise(connectionString);
+//      }
+// } 
 //# sourceMappingURL=db.js.map

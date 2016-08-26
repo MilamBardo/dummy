@@ -2,9 +2,10 @@
 var Users;
 (function (Users) {
     class User {
-        constructor(username, userPassword) {
+        constructor(username, hashedPassword, email) {
             this.name = username;
-            this.encryptedpassword = userPassword;
+            this.encryptedpassword = hashedPassword;
+            this.email = email;
             this.createddate = new Date();
         }
     }

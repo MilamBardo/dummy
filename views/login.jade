@@ -2,16 +2,21 @@ extends layout
 
 block content
     h1= title
-    if registrationsuccess
-        p Registration successfull.  Please now verify your account through the email you provided, and then log in.
+    if alertmessage
+        p(style="color: red")=alertmessage
     else
         p Please enter your details below to login:
-    form(name="login", action="/login", method="post")
-        label username: 
-            input(type="text", name="user")
-        label password: 
-            input(type="password", name="pass")
+    form(name="login", action="/login", method="post" class="formpost")
+        label Username: 
+        br
+        input(type="text", name="user")
+        br
+        label Password: 
+        br
+        input(type="password", name="pass")
         br
         br
         input(type="submit", value="Login")
+        br
+        br
         a(href ="/register") Register

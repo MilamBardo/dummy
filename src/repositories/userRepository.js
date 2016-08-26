@@ -1,25 +1,10 @@
 //import sqlProvider = require('../sql');
 //var sql = sqlProvider.products;
 "use strict";
-/// <reference path='../../typings/globals/pgpromise/pg-promise.d.ts' />
-/// <reference path='../../typings/index.d.ts'/>
-const pg = require('pg');
-const pgPromise = require('pg-promise');
+const dbProvider = require('../../db');
 class userRepository {
-    // constructor(db:any) {
-    //     this.db = db;
-    // }
     constructor() {
-        this.pgp = pgPromise({});
-        this.connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
-        this.db = this.pgp(this.connectionString);
-        this.config = {
-            host: 'localhost',
-            user: 'Almos',
-            database: 'Almos',
-            password: 'Talanath5',
-            port: 5432 //env var: PGPORT
-        };
+        this.db = dbProvider.dbpool;
     }
     // Creates the table;
     //create = () =>this.db.none(sql.create);
@@ -32,44 +17,38 @@ class userRepository {
     // addnew = (values:any) =>
     //  this.db.one(sql.add, values)
     //  .then((user:any) => user.id);
-    add(u) {
-        let uname = u.name;
-        let upassword = u.encryptedpassword;
-        let callback = ((err, client) => {
-            client.query('INSERT INTO Users(name, encryptedpassword) VALUES($1, $2) RETURNING id', [uname, upassword], function (err, result) {
-                // you MUST return your client back to the pool when you're done!
-                //console.log(result.rows[0].name); // output: foo
-                let newid = result.rows[0].name;
-            });
-        });
-        pg.connect(this.connectionString, callback);
+    // add (u: Users.Users.User) 
+    // { 
+    //     let uname = u.name;
+    //     let upassword = u.encryptedpassword;
+    //     let callback = ((err: Error, client: pg.Client)=>
+    //     { 
+    //         client.query('INSERT INTO Users(name, encryptedpassword) VALUES($1, $2) RETURNING id', [uname, upassword], function(err, result) {
+    //                     // you MUST return your client back to the pool when you're done!
+    //                     //console.log(result.rows[0].name); // output: foo
+    //                     let newid =  result.rows[0].name;
+    //                     });
+    //     });
+    //     pg.connect(this.connectionString, callback);
+    // };
+    add(user) {
+        //var name = user.name;
+        //var en
+        return this.db.one("INSERT INTO Users(name, encryptedpassword, email, created) VALUES($1, $2, $3, $4) RETURNING id", [user.name, user.encryptedpassword, user.email, user.createddate]);
+    }
+    ;
+    verify(user) {
+        return this.db.one("Update Users SET IsVerified = $1 WHERE name=$2 and email=$3 VALUES($1, $2, $3) RETURNING id", [true, user.name, user.email]);
     }
     ;
     findany(username) {
-        let qrm = this.pgp.queryResult;
-        return this.db.one('select * from users WHERE name =$1', 'red');
-        //     .then(data=> {
-        // // success;
-        // let x = data.rows[0];
-        // return x;
-        //             })
-        //             .catch(error=> {
-        // // error;
-        // let x=1;
-        // })
+        return this.db.one('select * from users WHERE name =$1', username);
     }
     ;
     findbyusername(username) {
-        let callback = ((err, client) => {
-            client.query('SELECT * FROM Users WHERE name = $1', [username], function (err, result) {
-                // you MUST return your client back to the pool when you're done!
-                //console.log(result.rows[0].name); // output: foo
-                let newid = result.rows[0].id;
-                let name = result.rows[0].name;
-            });
-        });
-        pg.connect(this.connectionString, callback);
+        return this.db.one('select * from users WHERE name =$1', username);
     }
+    ;
 }
 exports.userRepository = userRepository;
 //# sourceMappingURL=userRepository.js.map

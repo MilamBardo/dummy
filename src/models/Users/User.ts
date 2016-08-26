@@ -10,10 +10,12 @@
         isadmin : boolean;
         createddate : Date; 
         
-        constructor(username : string, userPassword : string) {
+        constructor(username : string, hashedPassword : string, email: string) {
             this.name = username;
-            this.encryptedpassword = userPassword;
+            this.encryptedpassword = hashedPassword;
+            this.email = email;
             this.createddate = new Date();
         }
+
     }
 }
