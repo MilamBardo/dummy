@@ -12,6 +12,8 @@ import * as  bodyParser from 'body-parser';
 
 let app = express();
 
+app.locals.moment = require('moment');
+
 app.use('/static', express.static(path.join(__dirname, '../static')));
 
 app.use(express.static(__dirname + '/public'));
@@ -26,7 +28,7 @@ app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
 
-
+//LIVE conString: "postgres://nodeuser:Talanath5@127.0.0.1:5432/Almos";
 var pg = require('pg'), session = require('express-session'), pgSession = require('connect-pg-simple')(session);
 
         var PostgreSqlStore = require('connect-pg-simple')(session);
@@ -39,6 +41,7 @@ var pg = require('pg'), session = require('express-session'), pgSession = requir
           cookie : { maxAge: 3600000 },
           store : new PostgreSqlStore({
             conString:  "postgres://Almos:Talanath5@localhost:5432/Almos"
+            
           })
 
         };

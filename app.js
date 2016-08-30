@@ -8,6 +8,7 @@ const express = require('express');
 const bodyParser = require('body-parser');
 //import * as session from 'express-session';
 let app = express();
+app.locals.moment = require('moment');
 app.use('/static', express.static(path.join(__dirname, '../static')));
 app.use(express.static(__dirname + '/public'));
 // view engine setup
@@ -18,6 +19,7 @@ app.use(bodyParser.json());
 app.use(bodyParser.urlencoded({ extended: false }));
 // app.use(cookieParser());
 app.use(express.static(path.join(__dirname, 'public')));
+//LIVE conString: "postgres://nodeuser:Talanath5@127.0.0.1:5432/Almos";
 var pg = require('pg'), session = require('express-session'), pgSession = require('connect-pg-simple')(session);
 var PostgreSqlStore = require('connect-pg-simple')(session);
 //var app = express();

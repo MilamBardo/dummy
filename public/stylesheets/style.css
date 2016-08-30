@@ -21,12 +21,11 @@ nav {width:80%;}
 nav img {margin-right:5%;}
 /*.navlinks{margin-bottom: 40px;}*/
 
-.mainblog {border:1px solid black; padding: 10px; }
-.mainblog heading {color:black; background-color: white; padding: 5px; }
-.mainblog p {color:black; background-color: white; padding: 5px; }
+.mainblog {border:1px solid black; padding: 3%;}
+.mainblog heading {color:black; background-color: white;    }
+.mainblog p {color:black; background-color: white;  white-space: pre-wrap;  }
 
 .formpost { border: 1px solid black; padding: 20px;}
-/* .formpost textarea{width: 100px; height: 100px; max-width: 200px; max-height: 200px;} */
 
 .bioarticle {padding: 10px; margin:auto; }
 .bioarticle p{width: 70%;}

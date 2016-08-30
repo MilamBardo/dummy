@@ -8,6 +8,7 @@ var options = {
  }
 
 let pgp = pgPromise(options);
+//LIVE let connectionString : string = process.env.DATABASE_URL || 'postgres://nodeuser:Talanath5@127.0.0.1:5432/Almos';
 let connectionString : string = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
 let dbpool = pgp(connectionString);
 

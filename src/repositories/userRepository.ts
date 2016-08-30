@@ -34,30 +34,14 @@ import dbProvider = require('../../db')
         //  this.db.one(sql.add, values)
         //  .then((user:any) => user.id);
 
-        // add (u: Users.Users.User) 
-        // { 
-        //     let uname = u.name;
-        //     let upassword = u.encryptedpassword;
-
-        //     let callback = ((err: Error, client: pg.Client)=>
-        //     { 
-        //         client.query('INSERT INTO Users(name, encryptedpassword) VALUES($1, $2) RETURNING id', [uname, upassword], function(err, result) {
-        //                     // you MUST return your client back to the pool when you're done!
-        //                     //console.log(result.rows[0].name); // output: foo
-        //                     let newid =  result.rows[0].name;
-                            
-        //                     });
-        //     });
-        //     pg.connect(this.connectionString, callback);
-            
-        // };
+        
 
          add (user : Users.Users.User)
         {
                 //var name = user.name;
                 //var en
-                return this.db.one("INSERT INTO Users(name, encryptedpassword, email, created) VALUES($1, $2, $3, $4) RETURNING id",
-                    [user.name, user.encryptedpassword, user.email, user.createddate]);
+                return this.db.one("INSERT INTO Users(name, encryptedpassword, email, lockedout, loginattempts, created) VALUES($1, $2, $3, $4, $5, $6) RETURNING id",
+                    [user.name, user.encryptedpassword, user.email, user.lockedout, user.loginattempts, user.createddate]);
         };
         
         verify (user : Users.Users.User)
@@ -68,12 +52,49 @@ import dbProvider = require('../../db')
         
         findany (username: string) 
         {
-            return this.db.one('select * from users WHERE name =$1', username);
+            return this.db.oneOrNone('select * from users WHERE name =$1', username)
+            // .then( function (data : any) {
+            //     // success;
+            //     return this.mapuser(data);
+            // })
+            // .catch ( function (error : Error) {
+            //     console.log("ERROR:", error.message || error); // print error;
+            //     throw error
+            // });
+            
         };
 
         findbyusername (username: string) 
         {
-            return this.db.one('select * from users WHERE name =$1', username);
+            return this.db.oneOrNone('select * from users WHERE name =$1', username)
+            // .then( (data : any) =>{
+            //     // succesBs;
+            //     return this.mapuser(data);
+            // });
+        };
+
+        update (user: Users.Users.User)
+        {
+            return this.db.result('Update Users SET loginattempts = $1, lockedout = $2 WHERE id = $3', [user.loginattempts, user.lockedout, user.id]);
+        };
+
+        mapuser(userdata: any)
+        {
+            if (userdata == null)
+            {
+                return null;
+            }
+            let uid : number = userdata.id;
+            let username : string = userdata.name
+            let epassword : string = userdata.encryptedpassword
+            let email : string= userdata.email
+            let lockedout : boolean = userdata.lockedout;
+            let attempts : number = userdata.loginattempts
+            let isadmin : boolean = userdata.isadmin;
+            let verified : boolean = userdata.isverified;
+            let created : Date = userdata.created;
+
+            return new Users.Users.User( username , epassword , email , uid , lockedout , attempts , isadmin , verified, created );
         };
         //findbyusername (username: string) 
         // {

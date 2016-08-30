@@ -57,6 +57,7 @@ function repUsers() {
                     .then(result=> {
                         return result.rowCount;
                     });
-            }
+            },
+            incrementloginattempts : function (user: Users.)
         }
 }

@@ -7,9 +7,14 @@ block content
         a(href ="/blog/addpost") Add New Post
     if posts
         each val in posts
+            if loggedin && isadmin
+                form(name="editpost", action="/blog/editpost", method="get")
+                    input(type="hidden", name="postid" value=val.id)
+                    input(type="submit", value="editpost")
+
             article(class="mainblog")
                 header
                     h1= val.posttitle
                     p
-                        time= val.postdate
-                p= val.postbody
+                        time= (moment(val.postdate).format('MMM Do YYYY'))
+                p=val.postbody

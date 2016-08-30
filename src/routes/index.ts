@@ -66,6 +66,7 @@ router.get('/store', function (req, res) {
     }
     else{
 
+          //MUST FIRST CHECK THAT USERNAME IS NOT BEING USED ALREADY
           var bcrypt = require('bcrypt');
           const saltRounds = 10;
 
@@ -86,62 +87,84 @@ router.get('/store', function (req, res) {
               });
               promise.catch((err : any) => {
                 // This is never called
-                res.render('login', {alertmessage: "Problem when registering, please try again. "});
+                res.render('register', {alertmessage: "Problem when registering, please try again. "});
               });
       });
     }
   });
 
 router.post('/login', (req:any, res:any, next: any) =>{
-  let suppliedusername = req.body.user;
-  let suppliedpassword = req.body.pass;
-  let usersRepos = new UserRepository.userRepository();
 
-  const promise = new Promise.Promise((resolve :any , reject : any) => { resolve(usersRepos.findany(suppliedusername)); });
-  var bcrypt = require('bcrypt');
-  promise.then((data:any) => {
-        bcrypt.compare(suppliedpassword, data.encryptedpassword, function(err: Error, match: any) {
-          // res == true
-          if(err)
-          {
-            throw err;
-          }
+  try
+  {
+    
+    let suppliedusername = req.body.user;
+    let suppliedpassword = req.body.pass;
+    let usersRepos = new UserRepository.userRepository();
 
-          if(match)
-          {
-              if (req.session) {
-                  //req.session.user = suppliedusername
-                  req.session.username = data.name;
-                  req.session.userisadmin = data.isadmin;
-                  res.render('index', { title: 'AlmosLataan Home', loggedin: true });
+    const promise = new Promise.Promise((resolve :any , reject : any) => { resolve(usersRepos.findany(suppliedusername)); });
+    var bcrypt = require('bcrypt');
+    promise.then((data:Users.Users.User) => {
+
+      if (data != null && !data.lockedout)
+      {
+          bcrypt.compare(suppliedpassword, data.encryptedpassword, function(err: Error, match: any) {
+            // res == true
+            if(err)
+            {
+              throw err;
+            }
+
+            if(match)
+            {
+                if (req.session) {
+                    //req.session.user = suppliedusername
+                    req.session.username = data.name;
+                    req.session.userisadmin = data.isadmin;
+                    res.render('index', { title: 'AlmosLataan Home', loggedin: true });
+                }
+                else {
+                    res.render('login', {alertmessage: "Problem with logging in to session"});
+                }
+            }
+            else
+            {
+              //Can't access class method - suspicion is that pg-promise isn't returning real objects
+              //data.incrementloginattempts(); 
+              //SO, TEMP FIX
+              data.loginattempts++
+              if (data.loginattempts > 3)
+              {
+                data.lockedout = true
               }
-              else {
-                  res.render('login', {alertmessage: "Problem with logging in to session"});
-              }
-          }
-          else
-          {
-            res.render('login', {alertmessage: "Login details don't match"});
-          }
-        });
+              //NOTICE NO PROMISE
+              usersRepos.update(data);
+              res.render('login', {alertmessage: "Login details don't match"});
+            }
+          });
+      }
+      else if(data.lockedout)
+      {
+        res.render('login', {alertmessage: "This account is locked out.  Please request unlock. "});
+      }
+      else
+      {
+        res.render('login', {alertmessage: "Login details not found"});
+      }
     });
-  promise.catch((err : Error) => {
-      // This is never called
-      //console.log('I didnt get called:');
-      res.render('login', {alertmessage: "Error when logging in "+err.message});
-  });
-
-
-//   const p: Promise<string> = new Promise (
-//    (resolve: (str: string)=>void, reject: (str: string)=>void) => {
-//       const a: string = "hello from Promise";
-//       resolve(a);
-//    }
-//  );
-// p.then((st) => {
-//   console.log(st);
-// });
-  
+    
+    promise.catch((err : Error) => {
+        // This is never called
+        //console.log('I didnt get called:');
+        res.render('login', {alertmessage: "Error when logging in "+err.message});
+    });
+    
+  }
+  catch (err)
+  {
+    res.render('login', {alertmessage: "Error when logging in.  Internal issue - please report"});
+    //throw err;
+  }
 });
 
 router.post('/logout', (req:any, res:any, next: any) =>{

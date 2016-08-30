@@ -1,6 +1,7 @@
 //import sqlProvider = require('../sql');
 //var sql = sqlProvider.products;
 "use strict";
+const Users = require('../models/Users/User');
 const dbProvider = require('../../db');
 class userRepository {
     constructor() {
@@ -17,24 +18,10 @@ class userRepository {
     // addnew = (values:any) =>
     //  this.db.one(sql.add, values)
     //  .then((user:any) => user.id);
-    // add (u: Users.Users.User) 
-    // { 
-    //     let uname = u.name;
-    //     let upassword = u.encryptedpassword;
-    //     let callback = ((err: Error, client: pg.Client)=>
-    //     { 
-    //         client.query('INSERT INTO Users(name, encryptedpassword) VALUES($1, $2) RETURNING id', [uname, upassword], function(err, result) {
-    //                     // you MUST return your client back to the pool when you're done!
-    //                     //console.log(result.rows[0].name); // output: foo
-    //                     let newid =  result.rows[0].name;
-    //                     });
-    //     });
-    //     pg.connect(this.connectionString, callback);
-    // };
     add(user) {
         //var name = user.name;
         //var en
-        return this.db.one("INSERT INTO Users(name, encryptedpassword, email, created) VALUES($1, $2, $3, $4) RETURNING id", [user.name, user.encryptedpassword, user.email, user.createddate]);
+        return this.db.one("INSERT INTO Users(name, encryptedpassword, email, lockedout, loginattempts, created) VALUES($1, $2, $3, $4, $5, $6) RETURNING id", [user.name, user.encryptedpassword, user.email, user.lockedout, user.loginattempts, user.createddate]);
     }
     ;
     verify(user) {
@@ -42,11 +29,43 @@ class userRepository {
     }
     ;
     findany(username) {
-        return this.db.one('select * from users WHERE name =$1', username);
+        return this.db.oneOrNone('select * from users WHERE name =$1', username);
+        // .then( function (data : any) {
+        //     // success;
+        //     return this.mapuser(data);
+        // })
+        // .catch ( function (error : Error) {
+        //     console.log("ERROR:", error.message || error); // print error;
+        //     throw error
+        // });
     }
     ;
     findbyusername(username) {
-        return this.db.one('select * from users WHERE name =$1', username);
+        return this.db.oneOrNone('select * from users WHERE name =$1', username);
+        // .then( (data : any) =>{
+        //     // succesBs;
+        //     return this.mapuser(data);
+        // });
+    }
+    ;
+    update(user) {
+        return this.db.result('Update Users SET loginattempts = $1, lockedout = $2 WHERE id = $3', [user.loginattempts, user.lockedout, user.id]);
+    }
+    ;
+    mapuser(userdata) {
+        if (userdata == null) {
+            return null;
+        }
+        let uid = userdata.id;
+        let username = userdata.name;
+        let epassword = userdata.encryptedpassword;
+        let email = userdata.email;
+        let lockedout = userdata.lockedout;
+        let attempts = userdata.loginattempts;
+        let isadmin = userdata.isadmin;
+        let verified = userdata.isverified;
+        let created = userdata.created;
+        return new Users.Users.User(username, epassword, email, uid, lockedout, attempts, isadmin, verified, created);
     }
     ;
 }

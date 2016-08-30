@@ -3,21 +3,22 @@ html
   head
     title= title
     link(rel='stylesheet', href='/stylesheets/style.css')
+    <script src='https://www.google.com/recaptcha/api.js'></script>
   body
     div(id='main' width="100%")
       hr(width="100%" )
       nav(width="100%")
         a(href ="/")
-          img(src="/images/Nav/LogoBanner.png" onmouseover="this.src='/images/Nav/LogoBanner_Blue.png'" onmouseout="this.src='/images/Nav/LogoBanner.png'")
+          img(src="/images/Nav/LogoBanner.png" alt="navigation link to AlmosLataan home page" title ="AlmosLataan home page" onmouseover="this.src='/images/Nav/LogoBanner_Blue.png'" onmouseout="this.src='/images/Nav/LogoBanner.png'")
         a(href ="/blog" class="navlinks")
-          img(src="/images/Nav/NavBlog.png" onmouseover="this.src='/images/Nav/NavBlog_Blue.png'" onmouseout="this.src='/images/Nav/NavBlog.png'") 
+          img(src="/images/Nav/NavBlog.png" alt="navigation link to photography blog" title ="navigation link to photography blog" onmouseover="this.src='/images/Nav/NavBlog_Blue.png'" onmouseout="this.src='/images/Nav/NavBlog.png'") 
         a(href ="/store" class="navlinks")
-          img(src="/images/Nav/NavStore.png" onmouseover="this.src='/images/Nav/NavStore_Blue.png'" onmouseout="this.src='/images/Nav/NavStore.png'")
+          img(src="/images/Nav/NavStore.png" alt="navigation link to photography store page" title ="navigation link to photography store page"  onmouseover="this.src='/images/Nav/NavStore_Blue.png'" onmouseout="this.src='/images/Nav/NavStore.png'")
         a(href ="/contact" class="navlinks")
-          img(src="/images/Nav/NavContact.png" onmouseover="this.src='/images/Nav/NavContact_Blue.png'" onmouseout="this.src='/images/Nav/NavContact.png'")
+          img(src="/images/Nav/NavContact.png" alt="navigation link to photography biography and contact information" title ="navigation link to photography biography and contact information"  onmouseover="this.src='/images/Nav/NavContact_Blue.png'" onmouseout="this.src='/images/Nav/NavContact.png'")
         if !loggedin
           a(href ="/login" class="navlinks")
-            img(src="/images/Nav/NavLoginButton.png" onmouseover="this.src='/images/Nav/NavLoginButton_Blue.png'" onmouseout="this.src='/images/Nav/NavLoginButton.png'")
+            img(src="/images/Nav/NavLoginButton.png" alt="navigation link to Login Page" title ="navigation link to Login Page" onmouseover="this.src='/images/Nav/NavLoginButton_Blue.png'" onmouseout="this.src='/images/Nav/NavLoginButton.png'")
         else
           form(name="logout", action="/logout", method="post")
             input(type="submit", value="logout")

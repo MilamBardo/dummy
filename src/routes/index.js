@@ -45,6 +45,7 @@ router.post('/registerprocess', (req, res, next) => {
         res.render('register', { alertmessage: "Problem when registering:  Emails don't match." });
     }
     else {
+        //MUST FIRST CHECK THAT USERNAME IS NOT BEING USED ALREADY
         var bcrypt = require('bcrypt');
         const saltRounds = 10;
         bcrypt.hash(req.body.password, 10, function (err, hash) {
@@ -60,53 +61,66 @@ router.post('/registerprocess', (req, res, next) => {
             });
             promise.catch((err) => {
                 // This is never called
-                res.render('login', { alertmessage: "Problem when registering, please try again. " });
+                res.render('register', { alertmessage: "Problem when registering, please try again. " });
             });
         });
     }
 });
 router.post('/login', (req, res, next) => {
-    let suppliedusername = req.body.user;
-    let suppliedpassword = req.body.pass;
-    let usersRepos = new UserRepository.userRepository();
-    const promise = new Promise.Promise((resolve, reject) => { resolve(usersRepos.findany(suppliedusername)); });
-    var bcrypt = require('bcrypt');
-    promise.then((data) => {
-        bcrypt.compare(suppliedpassword, data.encryptedpassword, function (err, match) {
-            // res == true
-            if (err) {
-                throw err;
+    try {
+        let suppliedusername = req.body.user;
+        let suppliedpassword = req.body.pass;
+        let usersRepos = new UserRepository.userRepository();
+        const promise = new Promise.Promise((resolve, reject) => { resolve(usersRepos.findany(suppliedusername)); });
+        var bcrypt = require('bcrypt');
+        promise.then((data) => {
+            if (data != null && !data.lockedout) {
+                bcrypt.compare(suppliedpassword, data.encryptedpassword, function (err, match) {
+                    // res == true
+                    if (err) {
+                        throw err;
+                    }
+                    if (match) {
+                        if (req.session) {
+                            //req.session.user = suppliedusername
+                            req.session.username = data.name;
+                            req.session.userisadmin = data.isadmin;
+                            res.render('index', { title: 'AlmosLataan Home', loggedin: true });
+                        }
+                        else {
+                            res.render('login', { alertmessage: "Problem with logging in to session" });
+                        }
+                    }
+                    else {
+                        //Can't access class method - suspicion is that pg-promise isn't returning real objects
+                        //data.incrementloginattempts(); 
+                        //SO, TEMP FIX
+                        data.loginattempts++;
+                        if (data.loginattempts > 3) {
+                            data.lockedout = true;
+                        }
+                        //NOTICE NO PROMISE
+                        usersRepos.update(data);
+                        res.render('login', { alertmessage: "Login details don't match" });
+                    }
+                });
             }
-            if (match) {
-                if (req.session) {
-                    //req.session.user = suppliedusername
-                    req.session.username = data.name;
-                    req.session.userisadmin = data.isadmin;
-                    res.render('index', { title: 'AlmosLataan Home', loggedin: true });
-                }
-                else {
-                    res.render('login', { alertmessage: "Problem with logging in to session" });
-                }
+            else if (data.lockedout) {
+                res.render('login', { alertmessage: "This account is locked out.  Please request unlock. " });
             }
             else {
-                res.render('login', { alertmessage: "Login details don't match" });
+                res.render('login', { alertmessage: "Login details not found" });
             }
         });
-    });
-    promise.catch((err) => {
-        // This is never called
-        //console.log('I didnt get called:');
-        res.render('login', { alertmessage: "Error when logging in " + err.message });
-    });
-    //   const p: Promise<string> = new Promise (
-    //    (resolve: (str: string)=>void, reject: (str: string)=>void) => {
-    //       const a: string = "hello from Promise";
-    //       resolve(a);
-    //    }
-    //  );
-    // p.then((st) => {
-    //   console.log(st);
-    // });
+        promise.catch((err) => {
+            // This is never called
+            //console.log('I didnt get called:');
+            res.render('login', { alertmessage: "Error when logging in " + err.message });
+        });
+    }
+    catch (err) {
+        res.render('login', { alertmessage: "Error when logging in.  Internal issue - please report" });
+    }
 });
 router.post('/logout', (req, res, next) => {
     req.session.destroy(function (err) {
