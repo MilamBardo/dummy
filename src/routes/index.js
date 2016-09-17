@@ -33,10 +33,22 @@ router.get('/login', function (req, res) {
     res.render('login');
 });
 router.get('/contact', function (req, res) {
-    res.render('contact');
+    var userloggedin = false;
+    if (req.session) {
+        if (req.session.username) {
+            userloggedin = true;
+        }
+    }
+    res.render('contact', { title: 'AlmosLataan Home', loggedin: userloggedin });
 });
 router.get('/store', function (req, res) {
-    res.render('store');
+    var userloggedin = false;
+    if (req.session) {
+        if (req.session.username) {
+            userloggedin = true;
+        }
+    }
+    res.render('store', { title: 'AlmosLataan Home', loggedin: userloggedin });
 });
 // P O S T S
 // router.post('/registerprocess', function(req, res, next) {

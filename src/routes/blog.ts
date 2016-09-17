@@ -25,6 +25,46 @@ router.get('/addpost', (req, res) => {
     }
 });
 
+router.get('/editpost', (req, res) => {
+    if (req.session.username && req.session.userisadmin)
+    {
+        let suppliedpostid = req.query.postid;
+        let postRepos = new PostRepository.postRepository();
+        const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+        promise.then((data:any) => {
+            res.render('editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: data });
+        });
+        promise.catch((err : any) => {
+            displayBlog(req, res);
+        });
+        
+    }
+});
+router.post('/editpost', (req:any, res:any, next: any) =>{
+    let suppliedpostid = req.body.postid;
+    let suppliedposttitle = req.body.posttitle;
+    let suppliedpostbody = req.body.postbody;
+
+    let postRepos = new PostRepository.postRepository();
+    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+        promise.then((post:any) => {
+            //TEMP while we figure out how to use classes properly
+            post.posttitle=suppliedposttitle;
+            post.postbody=suppliedpostbody;
+            //REALLY should be promising
+            const promiseUpdate = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.updatepost(post)); });
+            promiseUpdate.then((postupdated:any) => {
+                displayBlog(req, res);
+            });
+            promiseUpdate.catch((err : any) => {
+                res.render('editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, alertmessage:"Problem saving post" });
+            });
+        });
+        promise.catch((err : any) => {
+            displayBlog(req, res);
+        });
+        
+});
 router.post('/addpost', (req:any, res:any, next: any) =>{
     let suppliedposttitle = req.body.posttitle;
     let suppliedpostbody = req.body.postbody;

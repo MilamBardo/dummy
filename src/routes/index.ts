@@ -12,7 +12,6 @@ import * as UserRepository from '../repositories/userRepository';
 var router = express.Router();
 
 router.use('/blog', blogRouter);
-
 //var app = require('../../app');
 //app.use(router);
 
@@ -49,11 +48,28 @@ router.get('/login', function (req, res) {
 });
 
 router.get('/contact', function (req, res) {
-  res.render('contact');
+  var userloggedin = false;
+  if (req.session)
+  {
+    if (req.session.username)
+    {
+      userloggedin =true;
+      
+    }
+  }
+  res.render('contact', { title: 'AlmosLataan Home', loggedin: userloggedin } );
 });
 
 router.get('/store', function (req, res) {
-  res.render('store');
+  var userloggedin = false;
+  if (req.session)
+  {
+    if (req.session.username)
+    {
+      userloggedin =true;
+    }
+  }
+  res.render('store', { title: 'AlmosLataan Home', loggedin: userloggedin });
 });
 
 // P O S T S

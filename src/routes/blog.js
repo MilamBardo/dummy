@@ -19,6 +19,42 @@ router.get('/addpost', (req, res) => {
         res.render('addpost', { title: 'AlmosLataan Add New Post' });
     }
 });
+router.get('/editpost', (req, res) => {
+    if (req.session.username && req.session.userisadmin) {
+        let suppliedpostid = req.query.postid;
+        let postRepos = new PostRepository.postRepository();
+        const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+        promise.then((data) => {
+            res.render('editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: data });
+        });
+        promise.catch((err) => {
+            displayBlog(req, res);
+        });
+    }
+});
+router.post('/editpost', (req, res, next) => {
+    let suppliedpostid = req.body.postid;
+    let suppliedposttitle = req.body.posttitle;
+    let suppliedpostbody = req.body.postbody;
+    let postRepos = new PostRepository.postRepository();
+    const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+    promise.then((post) => {
+        //TEMP while we figure out how to use classes properly
+        post.posttitle = suppliedposttitle;
+        post.postbody = suppliedpostbody;
+        //REALLY should be promising
+        const promiseUpdate = new Promise.Promise((resolve, reject) => { resolve(postRepos.updatepost(post)); });
+        promiseUpdate.then((postupdated) => {
+            displayBlog(req, res);
+        });
+        promiseUpdate.catch((err) => {
+            res.render('editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, alertmessage: "Problem saving post" });
+        });
+    });
+    promise.catch((err) => {
+        displayBlog(req, res);
+    });
+});
 router.post('/addpost', (req, res, next) => {
     let suppliedposttitle = req.body.posttitle;
     let suppliedpostbody = req.body.postbody;

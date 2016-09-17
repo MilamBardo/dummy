@@ -4,15 +4,15 @@ var Posts;
 (function (Posts) {
     class Post {
         constructor(postTitle, postBody) {
-            this.postTitle = postTitle;
-            this.postBody = postBody;
-            this.postDate = new Date();
+            this.posttitle = postTitle;
+            this.postbody = postBody;
+            this.postdate = new Date();
         }
         get postImage() {
-            return this._postImage;
+            return this._postimage;
         }
         set postImage(img) {
-            this._postImage = img;
+            this._postimage = img;
         }
     }
     Posts.Post = Post;
