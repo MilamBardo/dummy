@@ -1,6 +1,7 @@
 body {
   padding: 10px 50px 50px 50px;
-  font: 14px "Lucida Grande", Helvetica, Arial, sans-serif;
+  font: 14px "Papyrus";
+  font-weight: bold;
 }
 
 a {
@@ -10,16 +11,14 @@ a {
 #main{position: relative;
     width: 100%;}
 
-#HomeImagePane{width:80%; margin:auto; text-align: center;}
-#HomeImagePane img {border-style:  solid;
-                    border-width: 1px;
-                    border-top: none;
-                    border-bottom: none;
-                    padding-left: 10%; padding-right: 10%;}
-
-nav {width:80%;}
+nav {width:100%;}
+nav a {font-family: Papyrus; font-size: 1em; color: black; text-align: center; margin-right: 1%; font-weight: bold; text-decoration: none;}
+nav a:hover {color:blue; }
+/* background-image: url("../images/Nav/NavBlank.png"); */
 nav img {margin-right:5%;}
 /*.navlinks{margin-bottom: 40px;}*/
+
+g-plusone {margin-left:30%;float:right;}
 
 .mainblog {border:1px solid black; padding: 3%;}
 .mainblog heading {color:black; background-color: white;    }
@@ -29,5 +28,13 @@ nav img {margin-right:5%;}
 
 .bioarticle {padding: 10px; margin:auto; }
 .bioarticle p{width: 70%;}
+.articlemainparagraph {font-family: Courier; font-weight: normal;}
+.blogposttitlehref{  font: 20px "Papyrus"; font-weight: bold; text-decoration: none; color: black;}
 
 .footer {width:60%; margin:auto; text-align: center;}
+
+.portfolio {float:left; display : inline-flex; flex-wrap: wrap; width:100%; }
+.gallerythumbnail { padding:2%;display: inline-block;
+    vertical-align: middle;  /* vertical alignment of the inline element */
+    height: 100%; margin-bottom: 20px;}
+.gallerythumbnail img{width:100%; display:inline-block; vertical-align: middle; }

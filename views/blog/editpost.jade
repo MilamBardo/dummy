@@ -1,0 +1,53 @@
+extends ../layout
+
+block content
+    if loggedin && isadmin
+        if alertmessage
+            p(style="color: red")=alertmessage
+        form(name="editpost", action="/blog/editpost", method="post", class="formpost")
+            div
+                label Post Title:
+            div
+                input(type="hidden", name="postid" value=post.id)
+                input(
+                    type="text",
+                    name="posttitle",
+                    value=post.posttitle
+                )
+            div
+                label: PostImage
+            div
+                if postimages != undefined
+                    input(type="hidden", name="currentpostimage" value=postimages[0].postimageid)
+                select(name="associatedpostimage")
+                    option(value="none") No image selected
+                    if portfolioimages
+                        if postimages != undefined
+                            each val in portfolioimages
+                                if val.imageid == postimages[0].imageid
+                                    option(value=val.imageid, selected)=val.imagename
+                                else
+                                    option(value=val.imageid)=val.imagename
+                        else
+                            each val in portfolioimages
+                                option(value=val.imageid)=val.imagename
+                div
+                    Label Image caption:
+                div
+                    if postimages != undefined
+                        input(type="text", name="imagecaption" value=postimages[0].postimagecaption)
+                    else
+                        input(type="text", name="imagecaption")
+
+            div
+                label Post Body:
+                br
+            div
+                textarea(
+                    name="postbody", 
+                    cols="120", 
+                    rows="20"
+                )=post.postbody
+            br
+            input(type="submit", value="editpost")
+        

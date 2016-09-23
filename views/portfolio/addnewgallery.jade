@@ -1,0 +1,7 @@
+extends ../layout
+
+block content
+    if alertmessage
+        p(style="color: red")=alertmessage
+    if loggedin && isadmin
+        p Hello, this functionality still needs to be added

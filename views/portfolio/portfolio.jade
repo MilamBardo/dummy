@@ -1,0 +1,49 @@
+extends ../layout
+
+block content
+    div(style="width:100%")
+        if alertmessage
+            p(style="color: red")=alertmessage
+        if loggedin && isadmin && mainportfolio
+            form(name="addimage", action="/portfolio/addportfolioimage", method="get")
+                        input(type="hidden", name="galleryid" value=mainportfolio.galleryid)
+                        input(type="hidden", name="gallerytotal" value=gallerytotal)
+                        input(type="submit", value="addimage")
+                        br
+        if mainportfolio
+            br
+            h=mainportfolio.galleryname
+            br
+            br
+            div(class="portfolio", style="width: 100%; height:100%;")
+                
+                if mainportfolio.galleryimages
+                    each val in mainportfolio.galleryimages
+                        if val.sizecontrollingdimension == "width"
+                            div(class="gallerythumbnail", style="align-content: center; width:"+val.sizecontrollingpercentage)
+                                img(src=val.imagefilepath, alt=val.imagealt, title=val.imagealt)
+                                if loggedin && isadmin && mainportfolio
+                                    form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
+                                        input(type="hidden", name="imagefilepath" value=val.imagefilepath)
+                                        input(type="hidden", name="imageid" value=val.imageid)
+                                        input(type="hidden", name="galleryimageid" value=val.galleryimageid)
+                                        input(type="submit", value="delete image")
+                                    form(name="editimage", action="/portfolio/editportfolioimage", method="get")
+                                        input(type="hidden", name="imageid" value=val.imageid)
+                                        input(type="hidden", name="galleryimageid" value=val.galleryimageid)
+                                        input(type="submit", value="edit image")
+                        else if val.sizecontrollingdimension == "height"
+                            div(class="gallerythumbnail", style="align-content: center;  height:"+val.sizecontrollingpercentage)
+                                img(src=val.imagefilepath, alt=val.imagealt, title=val.imagealt)
+                                if loggedin && isadmin && mainportfolio
+                                    form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
+                                        input(type="hidden", name="imagefilepath" value=val.imagefilepath)
+                                        input(type="hidden", name="imageid" value=val.imageid)
+                                        input(type="hidden", name="galleryimageid" value=val.galleryimageid)
+                                        input(type="submit", value="delete image")
+                                    form(name="editimage", action="/portfolio/editportfolioimage", method="get")
+                                        input(type="hidden", name="imageid" value=val.imageid)
+                                        input(type="hidden", name="galleryimageid" value=val.galleryimageid)
+                                        input(type="submit", value="edit image")
+                            
+                            

@@ -1,0 +1,19 @@
+extends ../layout
+
+block content
+    if alertmessage
+        p(style="color: red")=alertmessage
+    if post
+        if loggedin && isadmin
+            form(name="editpost", action="/blog/editpost", method="get")
+                input(type="hidden", name="postid" value=post.id)
+                input(type="submit", value="editpost")
+
+        article(class="mainblog")
+            header
+                h1= post.posttitle
+                p
+                    time= (moment(post.postdate).format('MMM Do YYYY'))
+            if mainimage
+                img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagealt) 
+            p(class="articlemainparagraph")!=post.postbody

@@ -2,7 +2,10 @@
 import * as express from 'express'
 const expresssession = require('express-session');
 const Promise = require('es6-promise');
+
 import * as blogRouter from "./blog";
+import * as portfolioRouter from "./portfolio";
+
 import * as Users from '../models/Users/User';
 import * as UserRepository from '../repositories/userRepository';
 
@@ -12,6 +15,7 @@ import * as UserRepository from '../repositories/userRepository';
 var router = express.Router();
 
 router.use('/blog', blogRouter);
+router.use('/portfolio', portfolioRouter);
 //var app = require('../../app');
 //app.use(router);
 

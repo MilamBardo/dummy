@@ -1,0 +1,47 @@
+extends ../layout
+
+block content
+    if alertmessage
+        p(style="color: red")=alertmessage
+    if loggedin && isadmin
+        if portfoliogalleryid
+            form(name="addportfolioimage", enctype="multipart/form-data", action="/portfolio/addportfolioimage", method="post")
+                input(type="hidden", name="gallerytotal", value=gallerytotal)
+                div
+                    label Image Name:
+                div
+                    input(
+                        type="text",
+                        name="imagename"
+                    )
+                div
+                    label Choose Image to Upload
+                div
+                    input(type="file", name="file")
+                div
+                    label Image Alt Text:
+                div
+                    input(
+                        type="text",
+                        name="alttext"
+                    )
+                div
+                    label Image Caption:
+                div
+                    input(
+                        type="text",
+                        name="imagecaption"
+                    )
+                div
+                    Label Size controlling dimension:
+                div
+                    select(name="sizecontrollingdimension")
+                        option(value="width") width
+                        option(value="width") height
+                div
+                    label Size controlling percentage
+                div
+                    input(type="text", name="sizecontrollingpercentage")
+                br
+                input(type="hidden", name="portfoliogalleryid" value=portfoliogalleryid)
+                input(type="submit", value="Add Image")
