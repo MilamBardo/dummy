@@ -38,15 +38,14 @@ router.get('/viewpost/:postid', (req, res) => {
     promise.then((data  :any) => {
         var post = data;
 
-         let imageRepos = new ImageRepository.imageRepository();
-        const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(imageRepos.getimagesbypostid(suppliedpostid)); });
+        const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
         promisePostImages.then((imagedata  :any) => {
             let mainimage : any = null;
             if (imagedata != null && imagedata.length >0)
                 {
                     mainimage = imagedata[0];
                 }
-            res.render('blog/viewpost', { title: 'AlmosLataan - '+data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage });
+            res.render('blog/viewpost', { title: data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage });
         });
         promisePostImages.catch((err : any) => {
             // This is never called
@@ -128,7 +127,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                                 displayBlog(req, res);
                             });
                         }
-                        else if (currentpostimageid != associatedpostimageid)
+                        else 
                         {
                             const promiseFetchPostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getpostimagebypostimageid(currentpostimageid)); });
                             promiseFetchPostImage.then((fetchedpostimage:any) => {

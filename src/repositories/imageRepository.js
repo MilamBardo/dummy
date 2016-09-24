@@ -13,7 +13,7 @@ class imageRepository {
     }
     ;
     addimageinfo(image) {
-        return this.db.one('INSERT INTO imageinfos(imagename, imagefilepath, imagealt, datecreated) VALUES($1, $2, $3, $4) RETURNING imageid', [image.imagename, image.imagefilepath, image.imagealt, image.datecreated]);
+        return this.db.one('INSERT INTO imageinfos(imagename, imagefilepath, imagetitle, imagealt, datecreated) VALUES($1, $2, $3, $4, $5) RETURNING imageid', [image.imagename, image.imagefilepath, image.imagetitle, image.imagealt, image.datecreated]);
     }
     ;
     addgalleryimage(galleryimage) {
@@ -23,6 +23,9 @@ class imageRepository {
     //UPDATES
     updategalleryimage(galleryimage) {
         return this.db.result('UPDATE galleryimages SET galleryimagecaption = $1, galleryimageordernumber = $2, sizecontrollingdimension = $3, sizecontrollingpercentage=$4 WHERE galleryimageid=$5', [galleryimage.galleryimagecaption, galleryimage.galleryimageordernumber, galleryimage.sizecontrollingdimension, galleryimage.sizecontrollingpercentage, galleryimage.galleryimageid]);
+    }
+    updateimageinfo(image) {
+        return this.db.result('UPDATE imageinfo SET imagealt = $1, imagetitle = $2 WHERE imageid = $3', [image.imagealt, image.imagetitle, image.imageid]);
     }
     //GETS
     getimageinfobyimageid(imageid) {
@@ -50,7 +53,7 @@ class imageRepository {
     }
     ;
     getgalleryimagebygalleryimageid(galleryimageid) {
-        return this.db.one('select * from galleryimages where galleryimageid=$1', [galleryimageid]);
+        return this.db.one('select gi.*, i.imagealt, i.imagetitle from galleryimages gi inner join imageinfos i on gi.imageid = i.imagid where galleryimageid=$1', [galleryimageid]);
     }
     ;
     //DELETES

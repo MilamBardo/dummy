@@ -15,5 +15,11 @@ block content
                 p
                     time= (moment(post.postdate).format('MMM Do YYYY'))
             if mainimage
-                img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagealt) 
+                div
+                    img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
+                    if mainimage.postimagecaption != undefined
+                        br
+                        Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
+                        br
+                        Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
             p(class="articlemainparagraph")!=post.postbody

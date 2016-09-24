@@ -6,11 +6,31 @@ block content
             p(style="color: red")=alertmessage
         form(name="editgalleryimage", action="/portfolio/editportfolioimage", method="post", class="formgalleryimage")
             div
-                label: Image Caption
-            divB
-                input(type="text", name="galleryimagecaption", value=galleryimage.galleryimagecaption)
+                Label Image Title
+            div
+                input(
+                        type="text",
+                        name="imagetitle",
+                        value=galleryimage.imagetitle
+                    )
+            div
+                label Image Caption
+            div
+                textarea(
+                        name="galleryimagecaption", 
+                        cols="90", 
+                        rows="10"
+                    )=galleryimage.galleryimagecaption
                 input(type="hidden", name="galleryimageid", value=galleryimage.galleryimageid)
                 input(type="hidden", name="galleryimageordernumber", value=galleryimage.galleryimageordernumber)
+            div
+                Label AltText
+            div
+                textarea(
+                        name="alttext", 
+                        cols="90", 
+                        rows="10"
+                    )=galleryimage.imagealt
             div
                 Label Size controlling dimension:
             div

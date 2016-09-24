@@ -19,18 +19,27 @@ block content
                 div
                     input(type="file", name="file")
                 div
-                    label Image Alt Text:
+                    label Image Title
                 div
                     input(
                         type="text",
-                        name="alttext"
+                        name="imagetitle"
+                    )
+                div
+                    label Image Alt Text:
+                div
+                    textarea(
+                        name="alttext", 
+                        cols="90", 
+                        rows="10"
                     )
                 div
                     label Image Caption:
                 div
-                    input(
-                        type="text",
-                        name="imagecaption"
+                    textarea(
+                        name="imagecaption", 
+                        cols="90", 
+                        rows="10"
                     )
                 div
                     Label Size controlling dimension:

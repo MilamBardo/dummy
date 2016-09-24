@@ -4,14 +4,16 @@
         imageid : number;
         imagename : string;
         imagefilepath: string;
+        imagetitle : string;
         imagealt: string;
         datecreated : Date;
         
-        constructor(filename : string, path : string, alt : string)
+        constructor(filename : string, path : string, alt : string, title : string)
         {
             this.imagename = filename+ "_"+ (new Date().toDateString());
             this.imagefilepath = path;
             this.imagealt = alt;
+            this.imagetitle = title;
             this.datecreated = new Date();
         }
     }

@@ -35,9 +35,17 @@ block content
                     Label Image caption:
                 div
                     if postimages != undefined
-                        input(type="text", name="imagecaption" value=postimages[0].postimagecaption)
+                        textarea(
+                            name="imagecaption", 
+                            cols="70", 
+                            rows="5"
+                            )=postimages[0].postimagecaption
                     else
-                        input(type="text", name="imagecaption")
+                        textarea(
+                            name="imagecaption", 
+                            cols="70", 
+                            rows="5"
+                            )
 
             div
                 label Post Body:

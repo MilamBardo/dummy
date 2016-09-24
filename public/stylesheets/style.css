@@ -22,6 +22,8 @@ g-plusone {margin-left:30%;float:right;}
 
 .mainblog {border:1px solid black; padding: 3%;}
 .mainblog heading {color:black; background-color: white;    }
+.mainblog header h1 a {color: black; text-decoration: none;}
+.mainblog header h1 a:hover { text-decoration: underline;}
 .mainblog p {color:black; background-color: white;  white-space: pre-wrap;  }
 
 .formpost { border: 1px solid black; padding: 20px;}

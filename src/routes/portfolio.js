@@ -33,6 +33,7 @@ router.post('/addportfolioimage', upload.single('file'), (req, res, next) => {
         let galleryid = req.body.portfoliogalleryid;
         let imagename = req.body.imagename;
         let alttext = req.body.alttext;
+        let imagetitle = req.body.imagetitle;
         let imagecaption = req.body.imagecaption;
         let sizecontrollingdimension = req.body.sizecontrollingdimension;
         let sizecontrollingpercentage = req.body.sizecontrollingpercentage;
@@ -49,7 +50,7 @@ router.post('/addportfolioimage', upload.single('file'), (req, res, next) => {
                 if (err)
                     throw err;
                 //console.log("Upload completed!");
-                let imageinfo = new Images.ImageInfo(imagename, savePath, alttext);
+                let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle);
                 const promise = new Promise.Promise((resolve, reject) => { resolve(imageRepos.addimageinfo(imageinfo)); });
                 promise.then((imageresult) => {
                     let galleryimage = new Images.GalleryImage(galleryid, imageresult.imageid, galleryorder, sizecontrollingdimension, sizecontrollingpercentage);
@@ -107,6 +108,8 @@ router.post('/editportfolioimage', (req, res, next) => {
     let galleryimageordernumber = req.body.galleryimageordernumber;
     let sizecontrollingdimension = req.body.sizecontrollingdimension;
     let sizecontrollingpercentage = req.body.sizecontrollingpercentage;
+    let alttext = req.body.alttext;
+    let imagetitle = req.body.imagetitle;
     let imageRepos = new ImageRepository.imageRepository();
     const promise = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getgalleryimagebygalleryimageid(galleryimageid)); });
     promise.then((galleryimage) => {
@@ -116,7 +119,23 @@ router.post('/editportfolioimage', (req, res, next) => {
         galleryimage.sizecontrollingpercentage = sizecontrollingpercentage;
         const promiseUpdate = new Promise.Promise((resolve, reject) => { resolve(imageRepos.updategalleryimage(galleryimage)); });
         promiseUpdate.then((galleryimage) => {
-            displayMainPortfolio(req, res);
+            //Now fecth and update image info as alt text may have been changed
+            const promiseFetchImageInfo = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getimageinfobyimageid(galleryimage.imageid)); });
+            promiseFetchImageInfo.then((fetchedimage) => {
+                //Update alttext
+                fetchedimage.imagealt = alttext;
+                fetchedimage.imagetitle = imagetitle;
+                const promiseUpdateImageInfo = new Promise.Promise((resolve, reject) => { resolve(imageRepos.updateimageinfo(fetchedimage)); });
+                promiseUpdateImageInfo.then((updatedimage) => {
+                    displayMainPortfolio(req, res);
+                });
+                promiseUpdateImageInfo((err) => {
+                    throw err;
+                });
+            });
+            promiseFetchImageInfo((err) => {
+                throw err;
+            });
         });
         promiseUpdate((err) => {
             throw err;

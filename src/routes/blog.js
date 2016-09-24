@@ -28,14 +28,13 @@ router.get('/viewpost/:postid', (req, res) => {
     const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
     promise.then((data) => {
         var post = data;
-        let imageRepos = new ImageRepository.imageRepository();
-        const promisePostImages = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getimagesbypostid(suppliedpostid)); });
+        const promisePostImages = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
         promisePostImages.then((imagedata) => {
             let mainimage = null;
             if (imagedata != null && imagedata.length > 0) {
                 mainimage = imagedata[0];
             }
-            res.render('blog/viewpost', { title: 'AlmosLataan - ' + data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage });
+            res.render('blog/viewpost', { title: data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage });
         });
         promisePostImages.catch((err) => {
             // This is never called
@@ -108,7 +107,7 @@ router.post('/editpost', (req, res, next) => {
                         displayBlog(req, res);
                     });
                 }
-                else if (currentpostimageid != associatedpostimageid) {
+                else {
                     const promiseFetchPostImage = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagebypostimageid(currentpostimageid)); });
                     promiseFetchPostImage.then((fetchedpostimage) => {
                         //change

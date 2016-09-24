@@ -14,9 +14,13 @@ block content
 
             article(class="mainblog")
                 header
-                    a(class="blogposttitlehref" href ="/blog/viewpost/"+val.id)=val.posttitle
+                    h1
+                        a(href ="/blog/viewpost/"+val.id)= val.posttitle
                     p
                         time= (moment(val.postdate).format('MMM Do YYYY'))
-                img(src=val.imagefilepath, alt=val.imagealt, title=val.imagealt) 
+                img(src=val.imagefilepath, alt=val.imagealt, title=val.imagealt)
+                if val.postimagecaption != undefined
+                    br
+                    Label(style="font-size: 0.75em;")!=val.postimagecaption
                 p(class="articlemainparagraph")!=val.postbody
                 a(href ="/blog/viewpost/"+val.id) Read More

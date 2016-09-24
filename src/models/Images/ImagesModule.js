@@ -1,9 +1,10 @@
 "use strict";
 class ImageInfo {
-    constructor(filename, path, alt) {
+    constructor(filename, path, alt, title) {
         this.imagename = filename + "_" + (new Date().toDateString());
         this.imagefilepath = path;
         this.imagealt = alt;
+        this.imagetitle = title;
         this.datecreated = new Date();
     }
 }
