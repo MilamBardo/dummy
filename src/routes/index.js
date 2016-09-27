@@ -82,54 +82,83 @@ router.post('/registerprocess', (req, res, next) => {
 });
 router.post('/login', (req, res, next) => {
     try {
-        let suppliedusername = req.body.user;
-        let suppliedpassword = req.body.pass;
-        let usersRepos = new UserRepository.userRepository();
-        const promise = new Promise.Promise((resolve, reject) => { resolve(usersRepos.findany(suppliedusername)); });
-        var bcrypt = require('bcrypt');
-        promise.then((data) => {
-            if (data != null && !data.lockedout) {
-                bcrypt.compare(suppliedpassword, data.encryptedpassword, function (err, match) {
-                    // res == true
-                    if (err) {
-                        throw err;
-                    }
-                    if (match) {
-                        if (req.session) {
-                            //req.session.user = suppliedusername
-                            req.session.username = data.name;
-                            req.session.userisadmin = data.isadmin;
-                            res.render('index', { title: 'AlmosLataan Home', loggedin: true });
+        let gcapture = req.body['g-recaptcha-response'];
+        let userIP = req.connection.remoteAddress;
+        if (gcapture === undefined || gcapture === '' || gcapture === null) {
+            //return res.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
+            res.render('login', { alertmessage: "Fail on capthcha not selected" });
+        }
+        // Put your secret key here.
+        var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
+        // req.connection.remoteAddress will provide IP address of connected user.
+        var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
+        // "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+        // Hitting GET request to the URL, Google will respond with success or error scenario.
+        var request = require('request');
+        //   var headers = new Headers();
+        // headers.append('Content-Type', 'application/json');
+        // this.http.post('http://some-url/', 
+        //                        JSON.stringify({firstName:'Joe',lastName:'Smith'}),
+        //                        {headers:headers})
+        request.post(verificationUrl, { form: { secret: secretKey, response: gcapture, remoteip: userIP } }, function (error, response, body) {
+            body = JSON.parse(body);
+            // Success will be true or false depending upon captcha validation.
+            if (body.success !== undefined && !body.success) {
+                //return res.json({"responseCode" : 1,"responseDesc" : "Failed captcha verification"});
+                res.render('login', { alertmessage: "Fail on request" });
+            }
+            //res.render('login', {alertmessage: "Ok, pass I think"});
+            //res.json({"responseCode" : 0,"responseDesc" : "Success"});
+            //REST OF LOGIN CODE HERE?
+            let suppliedusername = req.body.user;
+            let suppliedpassword = req.body.pass;
+            let usersRepos = new UserRepository.userRepository();
+            const promise = new Promise.Promise((resolve, reject) => { resolve(usersRepos.findany(suppliedusername)); });
+            var bcrypt = require('bcrypt');
+            promise.then((data) => {
+                if (data != null && !data.lockedout) {
+                    bcrypt.compare(suppliedpassword, data.encryptedpassword, function (err, match) {
+                        // res == true
+                        if (err) {
+                            throw err;
+                        }
+                        if (match) {
+                            if (req.session) {
+                                //req.session.user = suppliedusername
+                                req.session.username = data.name;
+                                req.session.userisadmin = data.isadmin;
+                                res.render('index', { title: 'AlmosLataan Home', loggedin: true });
+                            }
+                            else {
+                                res.render('login', { alertmessage: "Problem with logging in to session" });
+                            }
                         }
                         else {
-                            res.render('login', { alertmessage: "Problem with logging in to session" });
+                            //Can't access class method - suspicion is that pg-promise isn't returning real objects
+                            //data.incrementloginattempts(); 
+                            //SO, TEMP FIX
+                            data.loginattempts++;
+                            if (data.loginattempts > 3) {
+                                data.lockedout = true;
+                            }
+                            //NOTICE NO PROMISE
+                            usersRepos.update(data);
+                            res.render('login', { alertmessage: "Login details don't match" });
                         }
-                    }
-                    else {
-                        //Can't access class method - suspicion is that pg-promise isn't returning real objects
-                        //data.incrementloginattempts(); 
-                        //SO, TEMP FIX
-                        data.loginattempts++;
-                        if (data.loginattempts > 3) {
-                            data.lockedout = true;
-                        }
-                        //NOTICE NO PROMISE
-                        usersRepos.update(data);
-                        res.render('login', { alertmessage: "Login details don't match" });
-                    }
-                });
-            }
-            else if (data.lockedout) {
-                res.render('login', { alertmessage: "This account is locked out.  Please request unlock. " });
-            }
-            else {
-                res.render('login', { alertmessage: "Login details not found" });
-            }
-        });
-        promise.catch((err) => {
-            // This is never called
-            //console.log('I didnt get called:');
-            res.render('login', { alertmessage: "Error when logging in " + err.message });
+                    });
+                }
+                else if (data.lockedout) {
+                    res.render('login', { alertmessage: "This account is locked out.  Please request unlock. " });
+                }
+                else {
+                    res.render('login', { alertmessage: "Login details not found" });
+                }
+            });
+            promise.catch((err) => {
+                // This is never called
+                //console.log('I didnt get called:');
+                res.render('login', { alertmessage: "Error when logging in " + err.message });
+            });
         });
     }
     catch (err) {

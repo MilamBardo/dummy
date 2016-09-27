@@ -118,6 +118,39 @@ router.post('/login', (req:any, res:any, next: any) =>{
   try
   {
     
+
+    let gcapture = req.body['g-recaptcha-response'];
+    let userIP = req.connection.remoteAddress;
+
+    if(gcapture === undefined || gcapture === '' || gcapture === null) {
+      //return res.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
+      res.render('login', {alertmessage: "Fail on capthcha not selected"});
+    }
+  // Put your secret key here.
+  var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
+  // req.connection.remoteAddress will provide IP address of connected user.
+  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
+  // "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
+  // Hitting GET request to the URL, Google will respond with success or error scenario.
+
+  var request = require('request');
+//   var headers = new Headers();
+// headers.append('Content-Type', 'application/json');
+// this.http.post('http://some-url/', 
+//                        JSON.stringify({firstName:'Joe',lastName:'Smith'}),
+//                        {headers:headers})
+  request.post(verificationUrl, {form: {secret: secretKey, response: gcapture, remoteip: userIP}}, function(error : any,response : any ,body : any) {
+    body = JSON.parse(body);
+    // Success will be true or false depending upon captcha validation.
+    if(body.success !== undefined && !body.success) {
+      //return res.json({"responseCode" : 1,"responseDesc" : "Failed captcha verification"});
+      res.render('login', {alertmessage: "Fail on request"});
+    }
+    //res.render('login', {alertmessage: "Ok, pass I think"});
+    //res.json({"responseCode" : 0,"responseDesc" : "Success"});
+
+    //REST OF LOGIN CODE HERE?
+
     let suppliedusername = req.body.user;
     let suppliedpassword = req.body.pass;
     let usersRepos = new UserRepository.userRepository();
@@ -172,13 +205,13 @@ router.post('/login', (req:any, res:any, next: any) =>{
         res.render('login', {alertmessage: "Login details not found"});
       }
     });
-    
     promise.catch((err : Error) => {
         // This is never called
         //console.log('I didnt get called:');
         res.render('login', {alertmessage: "Error when logging in "+err.message});
     });
-    
+  });
+  
   }
   catch (err)
   {
