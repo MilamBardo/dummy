@@ -45,6 +45,7 @@ router.get('/viewpost/:postid', (req, res) => {
                 {
                     mainimage = imagedata[0];
                 }
+            regeneratesitemap();
             res.render('blog/viewpost', { title: data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage });
         });
         promisePostImages.catch((err : any) => {
@@ -121,6 +122,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                             // DELETE
                             const promiseDeletePostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.deletepostimage(currentpostimageid)); });
                             promiseDeletePostImage.then((deletedpostimage:any) => {
+                                regeneratesitemap();
                                 displayBlog(req, res);
                             });
                             promiseDeletePostImage.catch((err : any) => {
@@ -138,6 +140,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                                 //Now UPDATE
                                 const promiseUpdatePostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.updatepostimage(fetchedpostimage)); });
                                 promiseUpdatePostImage.then((fetchedpostimage:any) => {
+                                    regeneratesitemap();
                                     displayBlog(req, res);
                                 });
                                 promiseUpdatePostImage.catch((err : any) => {
@@ -159,6 +162,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                         postimagenew.postimagecaption = imagecaption;
                         const promiseInsertPostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.addpostimage(postimagenew)); });
                         promiseInsertPostImage.then((postimageresult:any) => {
+                            regeneratesitemap();
                             displayBlog(req, res);
                         });
                         promiseInsertPostImage.catch((err : any) => {
@@ -167,6 +171,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                 }
                 else
                 {
+                    regeneratesitemap();
                   displayBlog(req, res);  
                 }
 
@@ -191,6 +196,7 @@ router.post('/addpost', (req:any, res:any, next: any) =>{
     const promise = new Promise.Promise((resolve :any , reject : any) => { resolve(postRepos.add(newPost)); });
     
     promise.then((data:any) => {
+        regeneratesitemap();
         displayBlog(req, res);
     });
     promise.catch((err : any) => {
@@ -225,6 +231,55 @@ function displayBlog (req: any, res: any)
         // This is never called
         //console.log('No posts due to error');
         res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading blog.  Please contact if issue continues'+err.message+err.stack.toString });
+    });
+}
+
+function regeneratesitemap()
+{
+    //Delete old sitemap
+    //const fis = require('fs');
+    //fis.unlinkSync(filepath);
+
+    //build sitemapstring
+    let sitemapstring : string ="";
+    sitemapstring += '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
+    let frontpage : string = '<url><loc>http://almoslataan.com/</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>'
+    let portfolio : string = '<url><loc>http://almoslataan.com/portfolio</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+    let blog : string = '<url><loc>http://almoslataan.com/blog</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>'
+    let store : string = '<url><loc>http://almoslataan.com/store</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
+    let about : string = '<url><loc>http://almoslataan.com/about</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
+    
+    sitemapstring = sitemapstring + frontpage;
+    sitemapstring = sitemapstring + portfolio;
+    sitemapstring = sitemapstring + blog;
+    sitemapstring = sitemapstring + store;
+    sitemapstring = sitemapstring + about;
+
+    let postRepos = new PostRepository.postRepository();
+    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getallposts()); });
+    promise.then((posts:any) => {
+        for (var post of posts)
+        {
+            var moment = require('moment');
+            let postdate : Date = post.postdate;
+            let datestring = moment(postdate).format('YYYY-MM-DD');
+            let blogpost = '<url><loc>http://almoslataan.com/blog/viewpost/'+post.id.toString()+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+            sitemapstring = sitemapstring + blogpost;
+
+            
+        }
+        sitemapstring = sitemapstring +'</urlset>';
+        //Create new sitemap
+            var fs = require('fs');
+            fs.writeFile("./public/sitemap.xml", sitemapstring, function(err : any) {
+                if(err) {
+                    return console.log(err);
+                }
+            });
+    });
+    promise.catch((err:Error) => {
+        throw err;
+        //res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading blog.  Please contact if issue continues'+err.message+err.stack.toString });
     });
 }
 

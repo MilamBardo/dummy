@@ -34,6 +34,13 @@ router.get('/register', function (req, res) {
 router.get('/login', function (req, res) {
     res.render('login');
 });
+router.get('/sitemap', function (req, res) {
+    ;
+    //res.header('Content-Type', 'text/xml');
+    var path = require('path');
+    res.sendFile(path.resolve(__dirname + '/../../public/sitemap.xml'));
+    //res.render( 'sitemap' );
+});
 router.get('/contact', function (req, res) {
     var userloggedin = false;
     if (req.session) {
@@ -85,31 +92,16 @@ router.post('/login', (req, res, next) => {
         let gcapture = req.body['g-recaptcha-response'];
         let userIP = req.connection.remoteAddress;
         if (gcapture === undefined || gcapture === '' || gcapture === null) {
-            //return res.json({"responseCode" : 1,"responseDesc" : "Please select captcha"});
             res.render('login', { alertmessage: "Fail on capthcha not selected" });
         }
-        // Put your secret key here.
         var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
-        // req.connection.remoteAddress will provide IP address of connected user.
         var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
-        // "https://www.google.com/recaptcha/api/siteverify?secret=" + secretKey + "&response=" + req.body['g-recaptcha-response'] + "&remoteip=" + req.connection.remoteAddress;
-        // Hitting GET request to the URL, Google will respond with success or error scenario.
         var request = require('request');
-        //   var headers = new Headers();
-        // headers.append('Content-Type', 'application/json');
-        // this.http.post('http://some-url/', 
-        //                        JSON.stringify({firstName:'Joe',lastName:'Smith'}),
-        //                        {headers:headers})
         request.post(verificationUrl, { form: { secret: secretKey, response: gcapture, remoteip: userIP } }, function (error, response, body) {
             body = JSON.parse(body);
-            // Success will be true or false depending upon captcha validation.
             if (body.success !== undefined && !body.success) {
-                //return res.json({"responseCode" : 1,"responseDesc" : "Failed captcha verification"});
                 res.render('login', { alertmessage: "Fail on request" });
             }
-            //res.render('login', {alertmessage: "Ok, pass I think"});
-            //res.json({"responseCode" : 0,"responseDesc" : "Success"});
-            //REST OF LOGIN CODE HERE?
             let suppliedusername = req.body.user;
             let suppliedpassword = req.body.pass;
             let usersRepos = new UserRepository.userRepository();
@@ -146,6 +138,9 @@ router.post('/login', (req, res, next) => {
                             res.render('login', { alertmessage: "Login details don't match" });
                         }
                     });
+                }
+                else if (data == null) {
+                    res.render('login', { alertmessage: "Username or password not recognised. " });
                 }
                 else if (data.lockedout) {
                     res.render('login', { alertmessage: "This account is locked out.  Please request unlock. " });

@@ -40,6 +40,9 @@ class postRepository {
         return this.db.manyOrNone('select p.*, i.imagefilepath, i.imagealt, pi.postimagecaption from posts p left join postimages pi on p.id=pi.postid left join imageinfos i on pi.imageid = i.imageid order by p.postdate desc limit $1', postnumber);
     }
     ;
+    getallposts() {
+        return this.db.manyOrNone('select * from posts');
+    }
     //DELETES
     deletepostimage(postimageid) {
         return this.db.result('DELETE FROM postimages WHERE postimageid = $1', [postimageid]);
