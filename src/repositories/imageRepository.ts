@@ -36,13 +36,13 @@ export class imageRepository
         }
         updateimageinfo(image : Images.ImageInfo)
         {
-                return this.db.result('UPDATE imageinfo SET imagealt = $1, imagetitle = $2 WHERE imageid = $3', [image.imagealt, image.imagetitle, image.imageid]);
+                return this.db.result('UPDATE imageinfos SET imagealt = $1, imagetitle = $2 WHERE imageid = $3', [image.imagealt, image.imagetitle, image.imageid]);
         }
 
         //GETS
         getimageinfobyimageid(imageid : number)
         {
-                return this.db.oneOrNone('SELECT * FROM imageinfo where imageid = $1', [imageid]);
+                return this.db.oneOrNone('SELECT * FROM imageinfos where imageid = $1', [imageid]);
         };
         getallgalleries()
         {
@@ -66,7 +66,7 @@ export class imageRepository
         };
         getgalleryimagebygalleryimageid(galleryimageid:number)
         {
-                return this.db.one('select gi.*, i.imagealt, i.imagetitle from galleryimages gi inner join imageinfos i on gi.imageid = i.imagid where galleryimageid=$1', [galleryimageid]);
+                return this.db.one('select gi.*, i.imagealt, i.imagetitle from galleryimages gi inner join imageinfos i on gi.imageid = i.imageid where galleryimageid=$1', [galleryimageid]);
         };
 
         //DELETES

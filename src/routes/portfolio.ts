@@ -142,7 +142,7 @@ router.post('/editportfolioimage', (req:any, res:any, next: any) =>{
         galleryimage.sizecontrollingpercentage = sizecontrollingpercentage;
 
         const promiseUpdate = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.updategalleryimage(galleryimage)); });
-        promiseUpdate.then((galleryimage:any) => {
+        promiseUpdate.then((updateres:any) => {
 
             //Now fecth and update image info as alt text may have been changed
             const promiseFetchImageInfo = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.getimageinfobyimageid(galleryimage.imageid)); });

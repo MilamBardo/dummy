@@ -125,21 +125,21 @@ router.post('/login', (req:any, res:any, next: any) =>{
   try
   {
     
-    let gcapture = req.body['g-recaptcha-response'];
-    let userIP = req.connection.remoteAddress;
+  //   let gcapture = req.body['g-recaptcha-response'];
+  //   let userIP = req.connection.remoteAddress;
 
-    if(gcapture === undefined || gcapture === '' || gcapture === null) {
-      res.render('login', {alertmessage: "Fail on capthcha not selected"});
-    }
-  var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
-  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
+  //   if(gcapture === undefined || gcapture === '' || gcapture === null) {
+  //     res.render('login', {alertmessage: "Fail on capthcha not selected"});
+  //   }
+  // var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
+  // var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
 
-  var request = require('request');
-  request.post(verificationUrl, {form: {secret: secretKey, response: gcapture, remoteip: userIP}}, function(error : any,response : any ,body : any) {
-    body = JSON.parse(body);
-    if(body.success !== undefined && !body.success) {
-      res.render('login', {alertmessage: "Fail on request"});
-    }
+  // var request = require('request');
+  // request.post(verificationUrl, {form: {secret: secretKey, response: gcapture, remoteip: userIP}}, function(error : any,response : any ,body : any) {
+  //   body = JSON.parse(body);
+  //   if(body.success !== undefined && !body.success) {
+  //     res.render('login', {alertmessage: "Fail on request"});
+  //   }
 
     let suppliedusername = req.body.user;
     let suppliedpassword = req.body.pass;
@@ -204,7 +204,7 @@ router.post('/login', (req:any, res:any, next: any) =>{
         //console.log('I didnt get called:');
         res.render('login', {alertmessage: "Error when logging in "+err.message});
     });
-  });
+  //});
   
   }
   catch (err)

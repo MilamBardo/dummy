@@ -25,11 +25,11 @@ class imageRepository {
         return this.db.result('UPDATE galleryimages SET galleryimagecaption = $1, galleryimageordernumber = $2, sizecontrollingdimension = $3, sizecontrollingpercentage=$4 WHERE galleryimageid=$5', [galleryimage.galleryimagecaption, galleryimage.galleryimageordernumber, galleryimage.sizecontrollingdimension, galleryimage.sizecontrollingpercentage, galleryimage.galleryimageid]);
     }
     updateimageinfo(image) {
-        return this.db.result('UPDATE imageinfo SET imagealt = $1, imagetitle = $2 WHERE imageid = $3', [image.imagealt, image.imagetitle, image.imageid]);
+        return this.db.result('UPDATE imageinfos SET imagealt = $1, imagetitle = $2 WHERE imageid = $3', [image.imagealt, image.imagetitle, image.imageid]);
     }
     //GETS
     getimageinfobyimageid(imageid) {
-        return this.db.oneOrNone('SELECT * FROM imageinfo where imageid = $1', [imageid]);
+        return this.db.oneOrNone('SELECT * FROM imageinfos where imageid = $1', [imageid]);
     }
     ;
     getallgalleries() {
@@ -53,7 +53,7 @@ class imageRepository {
     }
     ;
     getgalleryimagebygalleryimageid(galleryimageid) {
-        return this.db.one('select gi.*, i.imagealt, i.imagetitle from galleryimages gi inner join imageinfos i on gi.imageid = i.imagid where galleryimageid=$1', [galleryimageid]);
+        return this.db.one('select gi.*, i.imagealt, i.imagetitle from galleryimages gi inner join imageinfos i on gi.imageid = i.imageid where galleryimageid=$1', [galleryimageid]);
     }
     ;
     //DELETES
