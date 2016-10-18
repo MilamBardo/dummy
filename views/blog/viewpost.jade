@@ -1,6 +1,8 @@
 extends ../layout
 
 block content
+    script.
+        type="application/ld+json" { "@context": "http://schema.org/", "@type": "Article", "name": "Strawberry-Mango Mesclun Recipe", "image": mainimage.imagefilepath,"author": {"@type": "AlmosLataan","name": post.posttitle},"datePublished": "2008-03-03"},}
     if alertmessage
         p(style="color: red")=alertmessage
     if post
