@@ -1,8 +1,15 @@
 extends ../layout
 
 block content
-    script.
-        type="application/ld+json" { "@context": "http://schema.org/", "@type": "Article", "name": "Strawberry-Mango Mesclun Recipe", "image": mainimage.imagefilepath,"author": {"@type": "AlmosLataan","name": post.posttitle},"datePublished": "2008-03-03"},}
+    script(type="application/ld+json"). 
+        {
+            "@context": "http://schema.org/",
+            "@type": "Article","name": "#{post.posttitle}",
+            "image": {"@type": "ImageObject",  "height":"100", "width": "100", "url": "#{mainimagefilepath}"},
+            "author": {"@type": "Person", "name": "AlmosLataan"},
+            "headline": "#{post.posttitle}",
+            "publisher": {"@type":"Organization", "name": "AlmosLataan", "logo":{"URL": ""}},
+            "datePublished": "#{post.postdate}"}
     if alertmessage
         p(style="color: red")=alertmessage
     if post
@@ -10,18 +17,21 @@ block content
             form(name="editpost", action="/blog/editpost", method="get")
                 input(type="hidden", name="postid" value=post.id)
                 input(type="submit", value="editpost")
-
-        article(class="mainblog")
-            header
-                h1= post.posttitle
-                p
-                    time= (moment(post.postdate).format('MMM Do YYYY'))
-            if mainimage
-                div
-                    img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
-                    if mainimage.postimagecaption != undefined
-                        br
-                        Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
-                        br
-                        Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
-            p(class="articlemainparagraph")!=post.postbody
+        div(style="display:inline-block; float:left;")
+            div(style="width:80%;display:inline-block; float:left;")
+                article(class="mainblog")
+                    header
+                        h1= post.posttitle
+                        p
+                            time= (moment(post.postdate).format('MMM Do YYYY'))
+                    if mainimage
+                        div
+                            img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
+                            if mainimage.postimagecaption != undefined
+                                br
+                                Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
+                                br
+                                Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
+                    p(class="articlemainparagraph")!=post.postbody
+            div(class="articleAdvertisement" style="width:20%, float:right;display:inline-block; ")
+                img(src="/images/VenetianLongSigned.jpg" width="80%"  alt="Tiles above and below and Van Gogh Style Tree")

@@ -31,11 +31,13 @@ router.get('/viewpost/:postid', (req, res) => {
         const promisePostImages = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
         promisePostImages.then((imagedata) => {
             let mainimage = null;
+            let mainimagefilepath = null;
             if (imagedata != null && imagedata.length > 0) {
                 mainimage = imagedata[0];
+                mainimagefilepath = "http://almoslataan.com/public/" + imagedata[0].imagefilepath;
             }
             regeneratesitemap();
-            res.render('blog/viewpost', { title: data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage });
+            res.render('blog/viewpost', { title: data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath });
         });
         promisePostImages.catch((err) => {
             // This is never called

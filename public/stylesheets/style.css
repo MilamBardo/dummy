@@ -33,6 +33,8 @@ g-plusone {margin-left:30%;float:right;}
 .articlemainparagraph {font-family: Courier; font-weight: normal;}
 .blogposttitlehref{  font: 20px "Papyrus"; font-weight: bold; text-decoration: none; color: black;}
 
+.articleAdvertisement{border:1px solid black; background-color: black;}
+.articleAdvertisement img{padding: 10%;}
 .footer {width:60%; margin:auto; text-align: center;}
 
 .portfolio {float:left; display : inline-flex; flex-wrap: wrap; width:100%; }
