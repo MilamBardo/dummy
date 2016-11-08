@@ -1,6 +1,64 @@
 extends ../layout
 
 block content
+    script(type="text/javascript"). 
+        var scapes = !{JSON.stringify(landscapes)};
+        var landscapeindex = 0;
+
+            function getnextlandscape(){
+                landscapeindex++;
+
+                if (landscapeindex < scapes.length)
+                {
+                    document.getElementById("landscapeimage").src=scapes[landscapeindex].imagefilepath;
+                }
+                else
+                {
+                    landscapeindex--;
+                }
+            }
+
+            function getpreviouslandscape(){
+                landscapeindex--;
+
+                if (landscapeindex > -1)
+                {
+                    document.getElementById("landscapeimage").src=scapes[landscapeindex].imagefilepath;
+                }
+                else
+                {
+                    landscapeindex++;
+                }
+            }
+            
+        var pors = !{JSON.stringify(portraits)};
+        var porindex = 0;
+
+            function getpreviousportrait(){
+                porindex--;
+
+                if (porindex > -1)
+                {
+                    document.getElementById("portraitimage").src=pors[porindex].imagefilepath;
+                }
+                else
+                {
+                    porindex--;
+                }
+            }
+            function getnextportrait(){
+                porindex++;
+
+                if (porindex < pors.length)
+                {
+                    document.getElementById("portraitimage").src=pors[porindex].imagefilepath;
+                }
+                else
+                {
+                    porindex--;
+                }
+            }
+
     div(style="width:100%")
         if alertmessage
             p(style="color: red")=alertmessage
@@ -12,12 +70,45 @@ block content
                         br
         if mainportfolio
             br
-            h=mainportfolio.galleryname
+            h(style="font-family: Courier New, Courier, monospace; font-size: 1em;")=mainportfolio.galleryname
             br
             br
-            div(class="portfolio", style="width: 100%; height:100%;")
+            div(class="portfolio", style="width: 50%; height:500%;")
                 
-                if mainportfolio.galleryimages
+                if portraits && portraits.length > 0
+                    div(class="gallerythumbnail", style="align-content: center; ")
+                        span(onclick="getpreviousportrait()") Prev
+                        span(onclick="getnextportrait()") Next
+                        img(id="portraitimage", onclick="getnextportrait()", src=portraits[0].imagefilepath, alt=portraits[0].imagealt, title=portraits[0].imagealt)
+                        if loggedin && isadmin && mainportfolio
+                            form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
+                                input(type="hidden", name="imagefilepath" value=portraits[0].imagefilepath)
+                                input(type="hidden", name="imageid" value=portraits[0].imageid)
+                                input(type="hidden", name="galleryimageid" value=portraits[0].galleryimageid)
+                                input(type="submit", value="delete image")
+                            form(name="editimage", action="/portfolio/editportfolioimage", method="get")
+                                input(type="hidden", name="imageid" value=portraits[0].imageid)
+                                input(type="hidden", name="galleryimageid" value=portraits[0].galleryimageid)
+                                input(type="submit", value="edit image")
+            div(class="portfolio", style="width: 50%; height:50%;")
+                
+                if landscapes
+                    div(class="gallerythumbnail", style="align-content: center; ")
+                        span(onclick="getpreviouslandscape()") Prev
+                        span(onclick="getnextlandscape()") Next
+                        img(id="landscapeimage", onclick="getnextlandscape()", src=landscapes[0].imagefilepath, alt=landscapes[0].imagealt, title=landscapes[0].imagealt)
+                        if loggedin && isadmin && mainportfolio
+                            form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
+                                input(type="hidden", name="imagefilepath" value=landscapes[0].imagefilepath)
+                                input(type="hidden", name="imageid" value=landscapes[0].imageid)
+                                input(type="hidden", name="galleryimageid" value=landscapes[0].galleryimageid)
+                                input(type="submit", value="delete image")
+                            form(name="editimage", action="/portfolio/editportfolioimage", method="get")
+                                input(type="hidden", name="imageid" value=landscapes[0].imageid)
+                                input(type="hidden", name="galleryimageid" value=landscapes[0].galleryimageid)
+                                input(type="submit", value="edit image")
+            
+                //-if mainportfolio.galleryimages
                     each val in mainportfolio.galleryimages
                         if val.sizecontrollingdimension == "width"
                             div(class="gallerythumbnail", style="align-content: center; width:"+val.sizecontrollingpercentage)

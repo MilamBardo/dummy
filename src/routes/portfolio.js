@@ -45,35 +45,43 @@ router.post('/addportfolioimage', upload.single('file'), (req, res, next) => {
         let savePath = /uploads/ + imagename + '.jpg';
         let targetPath = path.resolve('./public/uploads/' + imagename + '.jpg');
         if (path.extname(req.file.originalname).toLowerCase() === '.jpg') {
-            let imageRepos = new ImageRepository.imageRepository();
-            fs.rename(tempPath, targetPath, function (err) {
+            var sizeOf = require('image-size');
+            sizeOf(tempPath, function (err, dimensions) {
                 if (err)
                     throw err;
-                //console.log("Upload completed!");
-                let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle);
-                const promise = new Promise.Promise((resolve, reject) => { resolve(imageRepos.addimageinfo(imageinfo)); });
-                promise.then((imageresult) => {
-                    let galleryimage = new Images.GalleryImage(galleryid, imageresult.imageid, galleryorder, sizecontrollingdimension, sizecontrollingpercentage);
-                    if (imagecaption != undefined && imagecaption != null) {
-                        galleryimage.galleryimagecaption = imagecaption;
-                    }
-                    const promise2 = new Promise.Promise((resolve, reject) => { resolve(imageRepos.addgalleryimage(galleryimage)); });
-                    promise2.then((galleryimageid) => {
-                        // const promiseDeleteTemp = new Promise.Promise((resolve:any, reject:any) => { resolve(deleteFile("./uploads/"+tempBasename)); });
-                        // promiseDeleteTemp.then((filedeleted:any) => {
-                        displayMainPortfolio(req, res);
-                        // });
-                        // promise2.catch((err : any) => {
-                        //     displayMainPortfolio(req,res);
-                        // });
+                var imgwidth = dimensions.width;
+                var imgheight = dimensions.height;
+                if (imgwidth > 200 && imgheight > 200) {
+                    let imageRepos = new ImageRepository.imageRepository();
+                    fs.rename(tempPath, targetPath, function (err) {
+                        if (err)
+                            throw err;
+                        let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle, imgheight, imgwidth);
+                        const promise = new Promise.Promise((resolve, reject) => { resolve(imageRepos.addimageinfo(imageinfo)); });
+                        promise.then((imageresult) => {
+                            let galleryimage = new Images.GalleryImage(galleryid, imageresult.imageid, galleryorder, sizecontrollingdimension, sizecontrollingpercentage);
+                            if (imagecaption != undefined && imagecaption != null) {
+                                galleryimage.galleryimagecaption = imagecaption;
+                            }
+                            const promise2 = new Promise.Promise((resolve, reject) => { resolve(imageRepos.addgalleryimage(galleryimage)); });
+                            promise2.then((galleryimageid) => {
+                                // const promiseDeleteTemp = new Promise.Promise((resolve:any, reject:any) => { resolve(deleteFile("./uploads/"+tempBasename)); });
+                                // promiseDeleteTemp.then((filedeleted:any) => {
+                                displayMainPortfolio(req, res);
+                                // });
+                                // promise2.catch((err : any) => {
+                                //     displayMainPortfolio(req,res);
+                                // });
+                            });
+                            promise2.catch((err) => {
+                                throw err;
+                            });
+                            promise.catch((err) => {
+                                throw err;
+                            });
+                        });
                     });
-                    promise2.catch((err) => {
-                        throw err;
-                    });
-                    promise.catch((err) => {
-                        throw err;
-                    });
-                });
+                }
             });
         }
         else {
@@ -213,7 +221,17 @@ function displayMainPortfolio(req, res) {
                 //might be null
                 gallery.galleryimages = galleryimages;
                 let gallerytotal = galleryimages.length;
-                res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio', loggedin: loggedin, isadmin: isadmin, mainportfolio: gallery, gallerytotal: gallerytotal });
+                let portraits = [];
+                let landscapes = [];
+                for (var item of galleryimages) {
+                    if (item.orientation == "L") {
+                        landscapes.push(item);
+                    }
+                    else {
+                        portraits.push(item);
+                    }
+                }
+                res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio', loggedin: loggedin, isadmin: isadmin, landscapes: landscapes, portraits: portraits, mainportfolio: gallery, gallerytotal: gallerytotal });
             });
             promise.catch((err) => {
             });

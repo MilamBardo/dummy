@@ -7,14 +7,26 @@
         imagetitle : string;
         imagealt: string;
         datecreated : Date;
+        height : number;
+        width : number;
+        orientation : string;
         
-        constructor(filename : string, path : string, alt : string, title : string)
+        constructor(filename : string, path : string, alt : string, title : string, height : number, width : number)
         {
             this.imagename = filename+ "_"+ (new Date().toDateString());
             this.imagefilepath = path;
             this.imagealt = alt;
             this.imagetitle = title;
             this.datecreated = new Date();
+            this.height = height;
+            this.width = width;
+            
+            if (height == width) 
+            {this.orientation = "S";} //square
+            else if( height > width )
+            {this.orientation = "P";} //portrait
+            else
+            {this.orientation = "L";} //landscape
         }
     }
 

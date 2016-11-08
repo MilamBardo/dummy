@@ -61,35 +61,48 @@ router.post('/addportfolioimage', upload.single('file'), (req:any, res:any, next
         let savePath = /uploads/ + imagename + '.jpg'
         let targetPath = path.resolve('./public/uploads/'+imagename+'.jpg');
         if (path.extname(req.file.originalname).toLowerCase() === '.jpg') {
-            let imageRepos = new ImageRepository.imageRepository();
-            fs.rename(tempPath, targetPath, function(err : any) {
-                if (err) throw err;
-                //console.log("Upload completed!");
 
-                let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle);
-                const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.addimageinfo(imageinfo)); });
-                    promise.then((imageresult:any) => {
-                        let galleryimage= new Images.GalleryImage(galleryid, imageresult.imageid, galleryorder, sizecontrollingdimension, sizecontrollingpercentage);
-                        if (imagecaption != undefined && imagecaption != null)
-                        { galleryimage.galleryimagecaption=imagecaption; }
-                        const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.addgalleryimage(galleryimage)); });
-                        promise2.then((galleryimageid:any) => {
-                            // const promiseDeleteTemp = new Promise.Promise((resolve:any, reject:any) => { resolve(deleteFile("./uploads/"+tempBasename)); });
-                            // promiseDeleteTemp.then((filedeleted:any) => {
-                                displayMainPortfolio(req,res);
-                            // });
-                            // promise2.catch((err : any) => {
-                            //     displayMainPortfolio(req,res);
-                            // });
-                        });
-                        promise2.catch((err : any) => {
-                            throw err;
-                        });
-                    promise.catch((err : any) => {
-                        throw err;
-                        });
+            var sizeOf = require('image-size');
+                sizeOf(tempPath, function (err : any, dimensions : any) {
+                        if (err) throw err;
+                        
+                        var imgwidth= dimensions.width;
+                        var imgheight= dimensions.height;
+
+                        if( imgwidth>200 && imgheight>200)
+                        {
+                            let imageRepos = new ImageRepository.imageRepository();
+                            fs.rename(tempPath, targetPath, function(err : any) {
+                                if (err) throw err;
+
+                                    let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle, imgheight, imgwidth);
+                                    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.addimageinfo(imageinfo)); });
+                                        promise.then((imageresult:any) => {
+                                            let galleryimage= new Images.GalleryImage(galleryid, imageresult.imageid, galleryorder, sizecontrollingdimension, sizecontrollingpercentage);
+                                            if (imagecaption != undefined && imagecaption != null)
+                                            { galleryimage.galleryimagecaption=imagecaption; }
+                                            const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.addgalleryimage(galleryimage)); });
+                                            promise2.then((galleryimageid:any) => {
+                                                // const promiseDeleteTemp = new Promise.Promise((resolve:any, reject:any) => { resolve(deleteFile("./uploads/"+tempBasename)); });
+                                                // promiseDeleteTemp.then((filedeleted:any) => {
+                                                    displayMainPortfolio(req,res);
+                                                // });
+                                                // promise2.catch((err : any) => {
+                                                //     displayMainPortfolio(req,res);
+                                                // });
+                                            });
+                                            promise2.catch((err : any) => {
+                                                throw err;
+                                            });
+                                        promise.catch((err : any) => {
+                                            throw err;
+                                            });
+                                        });
+                                    });
+                        }
+
                 });
-            });
+                
         } 
         else {
             fs.unlink(tempPath, function (err:any) {
@@ -252,7 +265,22 @@ function displayMainPortfolio (req: any, res: any)
                         //might be null
                         gallery.galleryimages= galleryimages;
                         let gallerytotal = galleryimages.length;
-                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, mainportfolio : gallery, gallerytotal:gallerytotal});
+
+                        let portraits : Array<any> = [];
+                        let landscapes : Array<any> = [];
+
+                        for (var item of galleryimages) {
+                            if (item.orientation =="L")
+                            {
+                                landscapes.push(item);
+                            }
+                            else
+                            {
+                                portraits.push(item);
+                            }
+                        }
+
+                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
                     });
                     promise.catch((err : any) => {
                      });

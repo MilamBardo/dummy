@@ -22,7 +22,7 @@ export class imageRepository
         };
         addimageinfo (image: Images.ImageInfo)
         {
-                return this.db.one('INSERT INTO imageinfos(imagename, imagefilepath, imagetitle, imagealt, datecreated) VALUES($1, $2, $3, $4, $5) RETURNING imageid', [image.imagename, image.imagefilepath, image.imagetitle, image.imagealt, image.datecreated]);
+                return this.db.one('INSERT INTO imageinfos(imagename, imagefilepath, imagetitle, imagealt, height, width, orientation, datecreated) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING imageid', [image.imagename, image.imagefilepath, image.imagetitle, image.imagealt, image.height, image.width, image.orientation, image.datecreated]);
         };
         addgalleryimage(galleryimage : Images.GalleryImage)
         {

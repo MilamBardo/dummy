@@ -1,11 +1,22 @@
 "use strict";
 class ImageInfo {
-    constructor(filename, path, alt, title) {
+    constructor(filename, path, alt, title, height, width) {
         this.imagename = filename + "_" + (new Date().toDateString());
         this.imagefilepath = path;
         this.imagealt = alt;
         this.imagetitle = title;
         this.datecreated = new Date();
+        this.height = height;
+        this.width = width;
+        if (height == width) {
+            this.orientation = "S";
+        } //square
+        else if (height > width) {
+            this.orientation = "P";
+        } //portrait
+        else {
+            this.orientation = "L";
+        } //landscape
     }
 }
 exports.ImageInfo = ImageInfo;
