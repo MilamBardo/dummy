@@ -221,17 +221,20 @@ function displayMainPortfolio(req, res) {
                 //might be null
                 gallery.galleryimages = galleryimages;
                 let gallerytotal = galleryimages.length;
-                let portraits = [];
-                let landscapes = [];
-                for (var item of galleryimages) {
-                    if (item.orientation == "L") {
-                        landscapes.push(item);
-                    }
-                    else {
-                        portraits.push(item);
-                    }
-                }
-                res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio', loggedin: loggedin, isadmin: isadmin, landscapes: landscapes, portraits: portraits, mainportfolio: gallery, gallerytotal: gallerytotal });
+                // let portraits : Array<any> = [];
+                // let landscapes : Array<any> = [];
+                // for (var item of galleryimages) {
+                //     if (item.orientation =="L")
+                //     {
+                //         landscapes.push(item);
+                //     }
+                //     else
+                //     {
+                //         portraits.push(item);
+                //     }
+                // }
+                //res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
+                res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio', loggedin: loggedin, isadmin: isadmin, mainportfolio: gallery, gallerytotal: gallerytotal });
             });
             promise.catch((err) => {
             });

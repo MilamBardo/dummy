@@ -16,11 +16,13 @@ block content
                 header
                     h1
                         a(href ="/blog/viewpost/"+val.id)= val.posttitle
-                    p
+                    h2
                         time= (moment(val.postdate).format('MMM Do YYYY'))
-                img(src=val.imagefilepath, alt=val.imagealt, title=val.imagealt)
-                if val.postimagecaption != undefined
-                    br
-                    Label(style="font-size: 0.75em;")!=val.postimagecaption
-                p(class="articlemainparagraph")!=val.postbody
-                a(href ="/blog/viewpost/"+val.id) Read More
+                div(class="articlebackgroud")
+                    if val.imagefilepath
+                        img(class="articleimage", src=val.imagefilepath, alt=val.imagealt, title=val.imagealt)
+                    if val.postimagecaption != undefined
+                        br
+                        Label(style="font-size: 0.75em;")!=val.postimagecaption
+                    p(class="articlemainparagraph")!=val.postbody
+                    a(href ="/blog/viewpost/"+val.id) Read More

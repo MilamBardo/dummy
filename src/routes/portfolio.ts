@@ -266,22 +266,23 @@ function displayMainPortfolio (req: any, res: any)
                         gallery.galleryimages= galleryimages;
                         let gallerytotal = galleryimages.length;
 
-                        let portraits : Array<any> = [];
-                        let landscapes : Array<any> = [];
+                        // let portraits : Array<any> = [];
+                        // let landscapes : Array<any> = [];
 
-                        for (var item of galleryimages) {
-                            if (item.orientation =="L")
-                            {
-                                landscapes.push(item);
-                            }
-                            else
-                            {
-                                portraits.push(item);
-                            }
-                        }
+                        // for (var item of galleryimages) {
+                        //     if (item.orientation =="L")
+                        //     {
+                        //         landscapes.push(item);
+                        //     }
+                        //     else
+                        //     {
+                        //         portraits.push(item);
+                        //     }
+                        // }
 
-                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
-                    });
+                        //res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
+                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin,  mainportfolio : gallery, gallerytotal:gallerytotal});
+                });
                     promise.catch((err : any) => {
                      });
             }

@@ -30,9 +30,14 @@ var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@l
 // var query3 = client5.query('CREATE TABLE public.galleries(galleryid SERIAL PRIMARY KEY, galleryname character varying(200) NOT NULL, isdefault boolean NOT NULL, isprivate boolean NOT NULL, datecreated timestamp without time zone NOT NULL);');
 // query3.on('end', function() { client3.end(); });
 
+// var client4 = new pg.Client(connectionString);
+// client4.connect();
+// var query4 = client4.query('DROP TABLE public.imageinfos; CREATE TABLE public.imageinfos(imageid SERIAL PRIMARY KEY, imagename character varying(300) NOT NULL, imagefilepath character varying(500) NOT NULL, imagetitle character varying(500) NOT NULL, imagealt text NOT NULL, datecreated timestamp without time zone NOT NULL, height integer null, width integer null, orientation character varying(5) NULL);');
+// query4.on('end', function() { client4.end(); });
+
 var client4 = new pg.Client(connectionString);
 client4.connect();
-var query4 = client4.query('DROP TABLE public.imageinfos; CREATE TABLE public.imageinfos(imageid SERIAL PRIMARY KEY, imagename character varying(300) NOT NULL, imagefilepath character varying(500) NOT NULL, imagetitle character varying(500) NOT NULL, imagealt text NOT NULL, datecreated timestamp without time zone NOT NULL, height integer null, width integer null, orientation character varying(5) NULL);');
+var query4 = client4.query('ALTER TABLE public.imageinfos ADD height integer null, width integer null, orientation character varying(5) NULL')
 query4.on('end', function() { client4.end(); });
 
 // var client5 = new pg.Client(connectionString);

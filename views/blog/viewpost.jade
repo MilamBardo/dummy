@@ -20,18 +20,19 @@ block content
         div(style="display:inline-block; float:left;")
             div(style="width:80%;display:inline-block; float:left;")
                 article(class="mainblog")
-                    header
-                        h1= post.posttitle
-                        p
-                            time= (moment(post.postdate).format('MMM Do YYYY'))
-                    if mainimage
-                        div
-                            img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
-                            if mainimage.postimagecaption != undefined
-                                br
-                                Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
-                                br
-                                Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
-                    p(class="articlemainparagraph")!=post.postbody
+                    div(class="articlebackgroud")
+                        header
+                            h1= post.posttitle
+                            p
+                                time= (moment(post.postdate).format('MMM Do YYYY'))
+                        if mainimage
+                            div
+                                img(src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
+                                if mainimage.postimagecaption != undefined
+                                    br
+                                    Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
+                                    br
+                                    Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
+                        p(class="articlemainparagraph")!=post.postbody
             div(class="articleAdvertisement" style="width:20%, float:right;display:inline-block; ;")
                img(src="/uploads/Venetian.jpg"  alt="Tiles above and below and Van Gogh Style Tree")
