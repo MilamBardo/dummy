@@ -6,6 +6,7 @@ const Promise = require('es6-promise');
 const blogRouter = require("./blog");
 const portfolioRouter = require("./portfolio");
 const uploadsRouter = require("./uploads");
+const adminRouter = require("./admin");
 const Users = require('../models/Users/User');
 const UserRepository = require('../repositories/userRepository');
 //import * as app from '../../app';
@@ -13,6 +14,7 @@ var router = express.Router();
 router.use('/blog', blogRouter);
 router.use('/portfolio', portfolioRouter);
 router.use('/public/uploads', uploadsRouter);
+router.use('/admin', adminRouter);
 //var app = require('../../app');
 //app.use(router);
 router.use(function (req, res, next) {

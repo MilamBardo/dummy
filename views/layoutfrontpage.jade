@@ -32,6 +32,8 @@ html
               li
                 a(href ="/login" class="navlinks") Login
             else
+              li
+                a(href ="/admin" class="navlinks") Admin
               form(name="logout", action="/logout", method="post")
                 input(type="submit", value="logout")
             li

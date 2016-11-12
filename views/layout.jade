@@ -32,6 +32,8 @@ html
           a(href ="/login" class="navlinks") Login
             //-img(src="/images/Nav/NavLoginButton.png" alt="navigation link to Login Page" title ="navigation link to Login Page" onmouseover="this.src='/images/Nav/NavLoginButton_Blue.png'" onmouseout="this.src='/images/Nav/NavLoginButton.png'")
         else
+          li
+            a(href ="/admin" class="navlinks") Admin
           form(name="logout", action="/logout", method="post")
             input(type="submit", value="logout")
         div(id="socialcontainer", style="float:right; display: inline-block;")
@@ -42,6 +44,8 @@ html
         
       
       hr(width="100%")
+      if (errmsg != null || errmsg == undefined)
+        p= errmsg
       block content
       br
       hr(width="100%")
