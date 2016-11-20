@@ -32,13 +32,12 @@ html
           a(href ="/login" class="navlinks") Login
             //-img(src="/images/Nav/NavLoginButton.png" alt="navigation link to Login Page" title ="navigation link to Login Page" onmouseover="this.src='/images/Nav/NavLoginButton_Blue.png'" onmouseout="this.src='/images/Nav/NavLoginButton.png'")
         else
-          li
-            a(href ="/admin" class="navlinks") Admin
+          a(href ="/admin" class="navlinks") Admin
           form(name="logout", action="/logout", method="post")
             input(type="submit", value="logout")
         div(id="socialcontainer", style="float:right; display: inline-block;")
-          div(class="fb-like", data-href="http://almoslataan.com", data-layout="button", data-action="like", data-size="small", data-show-faces="false", data-share="true")
-          div(style="margin: 0 0 0 0;border:solid;", class="g-plusone", data-size="medium", data-annotation="none", data-width="120\b")
+        div(class="fb-like", data-href="http://almoslataan.com", data-layout="button", data-action="like", data-size="small", data-show-faces="false", data-share="true")
+        div(style="margin: 0 0 0 0;border:solid;", class="g-plusone", data-size="medium", data-annotation="none", data-width="120\b")
         
       
         
@@ -47,6 +46,7 @@ html
       if (errmsg != null || errmsg == undefined)
         p= errmsg
       block content
+      br
       br
       hr(width="100%")
       hr(width="60%")

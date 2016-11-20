@@ -1,7 +1,91 @@
 extends ../layout
 
 block content
-    //- script(type="text/javascript"). 
+    script. 
+        var gimages = !{JSON.stringify(mainportfolio.galleryimages)};
+        
+        function viewimage(ev)
+        {
+            var imagetoview = ev.target;
+            var fullimage;
+
+            for (var im of gimages)
+            {
+                if (im.imageid == imagetoview.id.replace("gt-", ""))
+                {
+                    fullimage=im;
+                }
+            }
+
+            var portfolioviewerdiv = document.getElementById("portfolioviewer");
+            //delete old image
+            while (portfolioviewerdiv.firstChild) {
+                    portfolioviewerdiv.removeChild(portfolioviewerdiv.firstChild);
+            }
+
+            //create new image box
+            var newdiv = document.createElement("div");
+
+            if (fullimage.orientation = "L")
+            {
+                newdiv.setAttribute("class", "portfolioviewboxlandscape");   
+            }
+            else
+            {
+                newdiv.setAttribute("class", "portfolioviewboxportrait"); 
+            }
+            var newimage = document.createElement("img");
+            newimage.setAttribute("src", fullimage.imagefilepath);
+            newimage.setAttribute("alt", fullimage.imagealt);
+            newimage.setAttribute("title", fullimage.imagealt);
+            newimage.setAttribute("style", "max-width:100%; height:auto;");
+
+            newdiv.appendChild(newimage);
+            portfolioviewerdiv.appendChild(newdiv);
+            
+
+        }
+
+    div(style="width:100%")
+        if alertmessage
+            p(style="color: red")=alertmessage
+        if loggedin && isadmin && mainportfolio
+            form(name="addimage", action="/portfolio/addportfolioimage", method="get")
+                        input(type="hidden", name="galleryid" value=mainportfolio.galleryid)
+                        input(type="hidden", name="gallerytotal" value=gallerytotal)
+                        input(type="submit", value="addimage")
+                        br
+        if mainportfolio
+            br
+            h(style="font-family: Courier New, Courier, monospace; font-size: 1em;")=mainportfolio.galleryname
+            br
+            br
+            div(class="portfolioviewer", id="portfolioviewer")
+                if mainportfolio.galleryimages && mainportfolio.galleryimages.length > 0
+                    if mainportfolio.galleryimages[0].orientation = "L"
+                        div(class="portfolioviewboxlandscape")
+                            img(src=mainportfolio.galleryimages[0].imagefilepath, alt=mainportfolio.galleryimages[0].imagealt, title=mainportfolio.galleryimages[0].imagealt)
+                    else
+                        div(class="portfolioviewboxportrait", style="align-content: center; padding: 5%;")
+                            img(src=mainportfolio.galleryimages[0].imagefilepath, alt=mainportfolio.galleryimages[0].imagealt, title=mainportfolio.galleryimages[0].imagealt)
+            div(class="portfolio")
+                if mainportfolio.galleryimages
+                    each val in mainportfolio.galleryimages
+                        div(class="gallerythumbnail", style="align-content: center; width: 25%;")
+                            img(id="gt-"+val.imageid, src=val.imagefilepath, alt=val.imagealt, title=val.imagealt, onclick="viewimage(event)")
+                            if loggedin && isadmin && mainportfolio
+                                form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
+                                    input(type="hidden", name="imagefilepath" value=val.imagefilepath)
+                                    input(type="hidden", name="imageid" value=val.imageid)
+                                    input(type="hidden", name="galleryimageid" value=val.galleryimageid)
+                                    input(type="submit", value="delete image")
+                                form(name="editimage", action="/portfolio/editportfolioimage", method="get")
+                                    input(type="hidden", name="imageid" value=val.imageid)
+                                    input(type="hidden", name="galleryimageid" value=val.galleryimageid)
+                                    input(type="submit", value="edit image")
+            
+
+        //- script(type="text/javascript").
     //-     var scapes = !{JSON.stringify(landscapes)};
     //-     var landscapeindex = 0;
 
@@ -30,7 +114,7 @@ block content
     //-                 landscapeindex++;
     //-             }
     //-         }
-            
+
     //-     var pors = !{JSON.stringify(portraits)};
     //-     var porindex = 0;
 
@@ -87,7 +171,7 @@ block content
             //-                     input(type="hidden", name="galleryimageid" value=portraits[0].galleryimageid)
             //-                     input(type="submit", value="edit image")
             //- div(class="portfolio", style="width: 50%; height:50%;")
-                
+
             //-     if landscapes
             //-         div(class="gallerythumbnail", style="align-content: center; ")
             //-             span(onclick="getpreviouslandscape()") Prev
@@ -132,32 +216,3 @@ block content
                 //-                         input(type="hidden", name="galleryimageid" value=val.galleryimageid)
                 //-                         input(type="submit", value="edit image")
 
-    div(style="width:100%")
-        if alertmessage
-            p(style="color: red")=alertmessage
-        if loggedin && isadmin && mainportfolio
-            form(name="addimage", action="/portfolio/addportfolioimage", method="get")
-                        input(type="hidden", name="galleryid" value=mainportfolio.galleryid)
-                        input(type="hidden", name="gallerytotal" value=gallerytotal)
-                        input(type="submit", value="addimage")
-                        br
-        if mainportfolio
-            br
-            h(style="font-family: Courier New, Courier, monospace; font-size: 1em;")=mainportfolio.galleryname
-            br
-            br
-            div(class="portfolio")
-                if mainportfolio.galleryimages
-                    each val in mainportfolio.galleryimages
-                        div(class="gallerythumbnail", style="align-content: center; width: 25%;")
-                            img(src=val.imagefilepath, alt=val.imagealt, title=val.imagealt)
-                            if loggedin && isadmin && mainportfolio
-                                form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
-                                    input(type="hidden", name="imagefilepath" value=val.imagefilepath)
-                                    input(type="hidden", name="imageid" value=val.imageid)
-                                    input(type="hidden", name="galleryimageid" value=val.galleryimageid)
-                                    input(type="submit", value="delete image")
-                                form(name="editimage", action="/portfolio/editportfolioimage", method="get")
-                                    input(type="hidden", name="imageid" value=val.imageid)
-                                    input(type="hidden", name="galleryimageid" value=val.galleryimageid)
-                                    input(type="submit", value="edit image")

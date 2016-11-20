@@ -13,7 +13,7 @@
         
         constructor(filename : string, path : string, alt : string, title : string, height : number, width : number)
         {
-            this.imagename = filename+ "_"+ (new Date().toDateString());
+            this.imagename = filename;
             this.imagefilepath = path;
             this.imagealt = alt;
             this.imagetitle = title;

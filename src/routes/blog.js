@@ -207,7 +207,7 @@ function regeneratesitemap() {
     let portfolio = '<url><loc>http://almoslataan.com/portfolio</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>';
     let blog = '<url><loc>http://almoslataan.com/blog</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>';
     let store = '<url><loc>http://almoslataan.com/store</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>';
-    let about = '<url><loc>http://almoslataan.com/about</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>';
+    let about = '<url><loc>http://almoslataan.com/contact</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>';
     sitemapstring = sitemapstring + frontpage;
     sitemapstring = sitemapstring + portfolio;
     sitemapstring = sitemapstring + blog;

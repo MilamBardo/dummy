@@ -3,9 +3,10 @@ body {
   font: 1em "Courier Regular";
   font-weight: bold;
 
-    background-image: url("../images/HomePage/Underpass-cyberpunk-bw-small.jpg");
-  background-size:     cover;                      /* <------ */
-    background-repeat:   no-repeat;
+    /* background-image: url("../images/HomePage/Underpass-cyberpunk-bw-small.jpg"); */
+    background-image: url("../images/HomePage/BlueSubwayTile2.jpg");
+    /* background-size:     cover;  */                    /* <------ */
+    background-repeat:   repeat;
     background-attachment: fixed;
 }
 
@@ -43,7 +44,23 @@ g-plusone {margin-left:30%;float:right;}
 .articleAdvertisement img{padding: 10%;}
 .footer {width:60%; margin:auto; text-align: center;}
 
-.portfolio {float:left; display : inline-flex; flex-wrap: wrap; width:100%; }
+.portfolio {float:left; display : inline-flex; flex-wrap: wrap; width:40%; }
+
+.portfolioviewer{float:left;   width:45%; border: 1px solid black; }
+.portfolioviewboxlandscape{align-content: center; padding: 3%; background:black;
+/*background-image: -webkit-gradient(linear, left top, left bottom, from(pink), to(black));*/
+/*background-image: -webkit-linear-gradient(top, pink, black);
+background-image: -moz-linear-gradient(top, pink, black);
+background-image: linear-gradient(to bottom, pink, black);*/
+ }
+.portfolioviewboxlandscape > img{width:100%; height:auto; display:block;}
+.portfolioviewboxportrait{align-content: center; padding: 5%; min-width: 40%; max-width: 40%;}
+
+
+.galleryedit{float:left; display : inline-flex; flex-wrap: wrap; width:100%; }
+
+.bin{float:left; width:100%;}
+.bin > img{width:10%;height:auto;}
 /*.gallerythumbnail { padding:2%;display: inline-block;
     vertical-align: middle; 
     height: 100%; margin-bottom: 20px;}

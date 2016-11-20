@@ -47,7 +47,7 @@ function displayadminpanel(req : any, res : any, err : string)
     }
 }
 
-router.post('/addportfolioimage', upload.single('file'), (req:any, res:any, next: any) =>{
+router.post('/uploadimage', upload.single('file'), (req:any, res:any, next: any) =>{
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
 
@@ -166,9 +166,9 @@ router.get('/editgallery', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
 
-    let galleryid : number = req.body.galleryid;
+    let galleryid = req.query.gallerylist;
     let galleryRepos = new GalleryRepository.galleryRepository();
-
+    let imageRepos = new ImageRepository.imageRepository();
     if (loggedin && isadmin && galleryid != undefined )
     {
         //fetch gallery
@@ -182,10 +182,37 @@ router.get('/editgallery', (req, res) => {
 
             const promiseGetGalleryImages = new Promise.Promise((resolve:any, reject:any) => {resolve(galleryRepos.getimagesbygalleryid(galleryid))});
             promiseGetGalleryImages.then((galleryimages:any) => {
-                //Have all information so display
-                res.render('Admin/editgallery', {loggedin : loggedin, isadmin : isadmin, gallery: gallery, galleryimages: galleryimages})
-            });
 
+                //Check for further other Images
+                const promiseGetOtherImages = new Promise.Promise((resolve:any, reject:any) => {resolve(imageRepos.getallimages())});
+                promiseGetOtherImages.then((otherimages:any) => {
+
+                    
+                    let remaining : any[] = [];
+                    for (var oimage of otherimages)
+                    {
+                        var found = false;
+                        for (var gimage of galleryimages)
+                        {
+                            if (oimage.imageid == gimage.imageid)
+                            {
+                                found = true;
+                            }
+                           
+                        }
+                        if (!found)
+                        {
+                            remaining.push(oimage);
+                        }
+                    }
+                    
+                    //Have all information so display
+                    res.render('admin/editgallery', {loggedin : loggedin, isadmin : isadmin, gallery: gallery, galleryimages: galleryimages, otherimages: remaining})
+                });
+            });
+            promiseGetGalleryImages.catch((err:any) =>{
+            throw err;
+        });
         })
         //fetch gallery pictures
 
@@ -199,6 +226,102 @@ router.get('/editgallery', (req, res) => {
     {
         //probably been logged out
         displayadminpanel(req,res, "cannot edit gallery")
+    }
+});
+
+router.post('/deleteImageFromGallery', (req:any,res:any) => {
+    try{
+        if (req.body)
+        {
+            let galleryRepos = new GalleryRepository.galleryRepository();
+            let galleryimageid = req.body[0].galleryimageid;
+            const promisedeletegalleryimage = new Promise.Promise((resolve:any, reject:any) => {resolve(galleryRepos.deletegalleryimage(galleryimageid))});
+            promisedeletegalleryimage.then((result:any) => {
+                res.setHeader("Content-Type", "text/json");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.end(JSON.stringify("imagedeleted"));
+            });
+            promisedeletegalleryimage.catch((error:any) => {
+                throw error;
+            });
+        }
+        else
+        {
+            throw new Error("no request body provided");
+        }
+    }
+    catch(e)
+    {
+        //should really log first;
+        res.setHeader("Content-Type", "text/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        let errorstring : string = (<Error>e).message;
+        res.end(JSON.stringify("error when deleting image from gallery"+errorstring));
+    }
+});
+//save gallery ajax request
+router.post('/saveGallery', (req : any, res: any) => {
+    try{
+            if (req.body)
+            {
+                let galleryRepos = new GalleryRepository.galleryRepository();
+                var imagearray = req.body;
+                //ideally, these should all be in a transaction, but whatever;
+                for (var item of imagearray ) {
+                    //first, check whether image has a agllery image yet
+                    if (item.galleryimageid == "")
+                    {
+                        //insert galleryimages
+                        let gimage : Images.GalleryImage = new Images.GalleryImage(item.galleryid, item.imageid, item.galleryimagesortnumber, "width", "50%" );
+                        gimage.galleryimagecaption = "no info";
+                        let promiseInsertGalleryImage = new Promise.Promise((resolve:any, reject:any) => {resolve(galleryRepos.addgalleryimage(gimage))});
+                        promiseInsertGalleryImage.catch((err:any) =>{
+                            throw err;
+                        });
+                    }
+                    else
+                    {
+                        //change order of gallery image
+                        //should really fetch from server 1st, but going to skip that and just add a method
+                        let promise = new Promise.Promise( (resolve: any, reject:any) => {resolve(galleryRepos.updategalleryimagesortorderbyid(item.galleryimageid, item.galleryimagesortnumber))});
+                        promise.then((galleryimages:any) => {
+                            //Woopy doo da
+                            
+                        });
+                        promise.catch((err:any) =>{
+                            throw err;
+                        });
+                    }
+                }
+                //success
+                res.setHeader("Content-Type", "text/json");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.end(JSON.stringify(true));
+            }
+            else
+            {
+                res.setHeader("Content-Type", "text/json");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.end(JSON.stringify("no data supplied"));
+            }
+    }
+    catch(e){
+        res.setHeader("Content-Type", "text/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        res.end(JSON.stringify("exception caught"));
+    }
+   //res.send(JSON.stringify({ result: true }));
+   //Rest of the code
+});
+
+router.post('fetchimage', (req:any, res:any) => {
+    if (req.body)
+    {
+        let imageRepos = new ImageRepository.imageRepository();
+
+        var imagearray = req.body;
+        var imagerequired = imagearray[0];
+        var imageid = imagerequired.imageid;
     }
 });
 

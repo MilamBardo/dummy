@@ -32,6 +32,11 @@ export class galleryRepository
             return this.db.result('UPDATE galleryimages SET galleryimagecaption = $1, galleryimageordernumber = $2, sizecontrollingdimension = $3, sizecontrollingpercentage=$4 WHERE galleryimageid=$5',[galleryimage.galleryimagecaption, galleryimage.galleryimageordernumber, galleryimage.sizecontrollingdimension, galleryimage.sizecontrollingpercentage, galleryimage.galleryimageid]);
     }
 
+    updategalleryimagesortorderbyid(galleryimageid:number, sortnumber:number)
+    {
+            return this.db.result('UPDATE galleryimages SET galleryimageordernumber = $1 WHERE galleryimageid=$2',[sortnumber, galleryimageid]);
+    }
+
     updatedefaultgallerytofalse(){
 
                 return this.db.result('UPDATE galleries SET isdefault = $1',[false]);
