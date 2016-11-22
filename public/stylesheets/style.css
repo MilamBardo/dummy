@@ -47,14 +47,10 @@ g-plusone {margin-left:30%;float:right;}
 .portfolio {float:left; display : inline-flex; flex-wrap: wrap; width:40%; }
 
 .portfolioviewer{float:left;   width:45%; border: 1px solid black; }
-.portfolioviewboxlandscape{align-content: center; padding: 3%; background:black;
-/*background-image: -webkit-gradient(linear, left top, left bottom, from(pink), to(black));*/
-/*background-image: -webkit-linear-gradient(top, pink, black);
-background-image: -moz-linear-gradient(top, pink, black);
-background-image: linear-gradient(to bottom, pink, black);*/
- }
+.portfolioviewboxlandscape{align-content: center; padding: 3%; background:black;}
+.portfolioviewboxportrait{align-content: center; padding: 3%; background:black;}
 .portfolioviewboxlandscape > img{width:100%; height:auto; display:block;}
-.portfolioviewboxportrait{align-content: center; padding: 5%; min-width: 40%; max-width: 40%;}
+.portfolioviewboxportrait > img{width:50%; height:auto; display:block; margin:auto;}
 
 
 .galleryedit{float:left; display : inline-flex; flex-wrap: wrap; width:100%; }

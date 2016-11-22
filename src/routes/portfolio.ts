@@ -16,7 +16,7 @@ let router = express.Router();
         
 router.get('/', (req, res) => {
     try{
-        displayMainPortfolio(req,res)
+        displayMainPortfolio(req,res);
     }
     catch (err)
     {
@@ -39,7 +39,127 @@ router.get('/addportfolioimage', (req, res) => {
     }
 });
 
+router.post('/fetchGallery', (req:any,res:any) => {
+    try{
+        if (req.body)
+        {
+            let galleryid = req.body[0].galleryid;
 
+            let galleryRepos = new GalleryRepository.galleryRepository();
+            const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getgallerybyid(galleryid)); });
+            promise.then((gallery:any) => {
+                if (gallery != null)
+                {
+                    const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getimagesbygalleryid(gallery.galleryid));});
+                    promise2.then((galleryimages:any) => {
+                        //might be null
+                        gallery.galleryimages= galleryimages;
+
+                        res.setHeader("Content-Type", "text/json");
+                        res.setHeader("Access-Control-Allow-Origin", "*");
+                        res.end(JSON.stringify(gallery));
+                    });
+                    promise2.catch((err:any) => {
+                        res.setHeader("Content-Type", "text/json");
+                        res.setHeader("Access-Control-Allow-Origin", "*");
+                        res.end(JSON.stringify("error fetching gallery"));
+                    });
+                }
+                else
+                {
+                    res.setHeader("Content-Type", "text/json");
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.end(JSON.stringify("gallery not found"));
+                }
+            });
+            promise.catch((err:any) => {
+                res.setHeader("Content-Type", "text/json");
+                res.setHeader("Access-Control-Allow-Origin", "*");
+                res.end(JSON.stringify("error fetching gallery"));
+            });
+        }
+    }
+    catch(e)
+    {
+        //should really log first;
+        res.setHeader("Content-Type", "text/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        let errorstring : string = (<Error>e).message;
+        res.end(JSON.stringify("error when deleting image from gallery"+errorstring));
+    }
+});
+
+function deleteFile (filepath : string) { 
+    const fs = require('fs');
+
+    fs.unlinkSync(filepath);
+}
+
+
+function displayMainPortfolio (req: any, res: any)
+{
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+
+    let galleryRepos = new GalleryRepository.galleryRepository();
+    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getdefaultgallery()); });
+        promise.then((gallery:any) => {
+            if (gallery == null)
+            {
+                //No default gallery set yet, so insert one
+                let defaultgallery = new Images.Gallery("Featured");
+                defaultgallery.isdefault = true;
+                  const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.addgallery(defaultgallery));});
+                    promise2.then((galleryid:any) => {
+                        defaultgallery.galleryid=galleryid;
+                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio', loggedin : loggedin, isadmin : isadmin, mainportfolio : defaultgallery});
+                    });
+                    promise2.catch((err : any) => {
+                     });
+            }
+            else
+            {
+                const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getimagesbygalleryid(gallery.galleryid));});
+                    promise2.then((galleryimages:any) => {
+                        //might be null
+                        gallery.galleryimages= galleryimages;
+                        let gallerytotal = galleryimages.length;
+
+                        // let portraits : Array<any> = [];
+                        // let landscapes : Array<any> = [];
+
+                        // for (var item of galleryimages) {
+                        //     if (item.orientation =="L")
+                        //     {
+                        //         landscapes.push(item);
+                        //     }
+                        //     else
+                        //     {
+                        //         portraits.push(item);
+                        //     }
+                        // }
+
+                        //res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
+
+                        //fetch other barebones galleries for display
+                        const promise3 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getallgalleries());});
+                        promise3.then((allgallerynames:any) => {
+
+                            res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin,  mainportfolio : gallery, gallerytotal:gallerytotal, allgallerynames: allgallerynames});    
+                        });
+                        promise.catch((err : any) => {
+                        });
+
+                        
+                });
+                    promise.catch((err : any) => {
+                     });
+            }
+        });
+        promise.catch((err : any) => {
+            //displayBlog(req, res);
+        });
+}
 
 // router.post('/addportfolioimage', upload.single('file'), (req:any, res:any, next: any) =>{
 //     let loggedin = req.session.username == null ? false : true;
@@ -235,67 +355,7 @@ router.get('/addportfolioimage', (req, res) => {
                     
 // });
 
-function deleteFile (filepath : string) { 
-    const fs = require('fs');
 
-    fs.unlinkSync(filepath);
-}
-
-
-function displayMainPortfolio (req: any, res: any)
-{
-    let loggedin = req.session.username == null ? false : true;
-    let isadmin = req.session.userisadmin == null ? false : true;
-
-    let galleryRepos = new GalleryRepository.galleryRepository();
-    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getdefaultgallery()); });
-        promise.then((gallery:any) => {
-            if (gallery == null)
-            {
-                //No default gallery set yet, so insert one
-                let defaultgallery = new Images.Gallery("Featured");
-                defaultgallery.isdefault = true;
-                  const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.addgallery(defaultgallery));});
-                    promise2.then((galleryid:any) => {
-                        defaultgallery.galleryid=galleryid;
-                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio', loggedin : loggedin, isadmin : isadmin, mainportfolio : defaultgallery});
-                    });
-                    promise2.catch((err : any) => {
-                     });
-            }
-            else
-            {
-                const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getimagesbygalleryid(gallery.galleryid));});
-                    promise2.then((galleryimages:any) => {
-                        //might be null
-                        gallery.galleryimages= galleryimages;
-                        let gallerytotal = galleryimages.length;
-
-                        // let portraits : Array<any> = [];
-                        // let landscapes : Array<any> = [];
-
-                        // for (var item of galleryimages) {
-                        //     if (item.orientation =="L")
-                        //     {
-                        //         landscapes.push(item);
-                        //     }
-                        //     else
-                        //     {
-                        //         portraits.push(item);
-                        //     }
-                        // }
-
-                        //res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
-                        res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin,  mainportfolio : gallery, gallerytotal:gallerytotal});
-                });
-                    promise.catch((err : any) => {
-                     });
-            }
-        });
-        promise.catch((err : any) => {
-            //displayBlog(req, res);
-        });
-}
 
 
 export= router;
