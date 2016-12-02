@@ -2,10 +2,16 @@
 class Post {
     //postimages: Array< ImageInfo>;
     //_postimage : Images.ImageInfo;
-    constructor(postTitle, postBody) {
-        this.posttitle = postTitle;
+    //constructor(postTitle : string, postBody : string);
+    constructor(postTitle, postBody, id, postURL, postDate) {
+        this.setPostTitle(postTitle);
         this.postbody = postBody;
-        this.postdate = new Date();
+        this.id = id != null ? id : null;
+        this.postdate = postDate != null ? postDate : new Date();
+    }
+    setPostTitle(postTitle) {
+        this.posttitle = postTitle;
+        this.posturl = postTitle.replace(' ', '-');
     }
 }
 exports.Post = Post;

@@ -15,7 +15,10 @@ block content
             article(class="mainblog")
                 header
                     h1
-                        a(href ="/blog/"+val.id+"/"+val.posttitle)= val.posttitle
+                        if (val.posturl)
+                            a(href ="/blog/"+val.id+"/"+val.posturl)= val.posttitle
+                        else
+                            a(href ="/blog/"+val.id+"/"+val.posttitle)= val.posttitle
                     h2
                         time= (moment(val.postdate).format('MMM Do YYYY'))
                 div(class="articlebackgroud")

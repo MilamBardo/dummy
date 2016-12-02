@@ -35,8 +35,8 @@ router.get('/:postid/:posttitle/', (req, res) => {
 
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-    promise.then((data  :any) => {
-        var post = data;
+    promise.then((post  :Posts.Post) => {
+        //var post = data;
 
         const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
         promisePostImages.then((imagedata  :any) => {
@@ -49,7 +49,7 @@ router.get('/:postid/:posttitle/', (req, res) => {
                     //mainimagefilepath = imagedata[0].imagefilepath;
                 }
             regeneratesitemap();
-            res.render('blog/viewpost', { title: data.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
+            res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
         });
         promisePostImages.catch((err : any) => {
             // This is never called
@@ -70,14 +70,14 @@ router.get('/editpost', (req, res) => {
         let suppliedpostid = req.query.postid;
         let postRepos = new PostRepository.postRepository();
         const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-        promise.then((data:any) => {
+        promise.then((post:Posts.Post) => {
             let imageRepos = new ImageRepository.imageRepository();
                 const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.getimagesbypostid(suppliedpostid)); });
                 promise2.then((postimages:any) => { 
                     const promise3 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.getallimages()); });
                     promise3.then((images:any) => {
                         if (postimages.length == 0) postimages=null;
-                        res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: data, postimages: postimages, portfolioimages: images});
+                        res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, postimages: postimages, portfolioimages: images});
                     });
                     promise3.catch((err : any) => {
                         displayBlog(req, res);
@@ -103,9 +103,10 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
 
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-        promise.then((post:any) => {
+        promise.then((post:Posts.Post) => {
             //TEMP while we figure out how to use classes properly
-            post.posttitle=suppliedposttitle;
+            
+            post.setPostTitle(suppliedposttitle);
             post.postbody=suppliedpostbody;
 
             //UPDATE POST
@@ -265,8 +266,9 @@ function regeneratesitemap()
         {
             var moment = require('moment');
             let postdate : Date = post.postdate;
+            let posturl = post.posturl != null ? post.posturl : post.posttitle;
             let datestring = moment(postdate).format('YYYY-MM-DD');
-            let blogpost = '<url><loc>http://almoslataan.com/blog/viewpost/'+post.id.toString()+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+            let blogpost = '<url><loc>http://almoslataan.com/blog/'+post.id.toString()+'/'+posturl+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
             sitemapstring = sitemapstring + blogpost;
 
             
