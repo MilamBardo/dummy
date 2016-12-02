@@ -1,6 +1,6 @@
 body {
   padding: 10px 50px 50px 50px;
-  font: 1em "Courier Regular";
+  font: 1em "Courier New, Courier, monospace";
   font-weight: bold;
 
     /* background-image: url("../images/HomePage/Underpass-cyberpunk-bw-small.jpg"); */
@@ -37,12 +37,12 @@ g-plusone {margin-left:30%;float:right;}
 
 .bioarticle {padding: 10px; margin:auto; }
 /*.bioarticle p{width: 70%;} */
-.articlemainparagraph {font-family: Courier; font-weight: normal;}
+.articlemainparagraph {font-family: Courier New, Courier, monospace; font-weight: normal;}
 .blogposttitlehref{  font: 20px "Papyrus"; font-weight: bold; text-decoration: none; color: black;}
 
 .articleAdvertisement{border:1px solid black;}
 .articleAdvertisement img{padding: 10%;}
-.footer {width:60%; margin:auto; text-align: center;}
+.footer {width:50%; font-weight: normal; font-size: 0.75em }
 
 .portfolio {float:left; display : inline-flex; flex-wrap: wrap; width:40%; }
 
