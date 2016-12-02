@@ -11,7 +11,7 @@ class Post {
     }
     setPostTitle(postTitle) {
         this.posttitle = postTitle;
-        this.posturl = postTitle.replace(' ', '-');
+        this.posturl = postTitle.replace(/\s/g, "-");
     }
 }
 exports.Post = Post;
