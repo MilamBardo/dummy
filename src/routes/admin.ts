@@ -108,7 +108,7 @@ router.get('/addnewgallery', (req, res) => {
 
     if (loggedin && isadmin)
     {
-        res.render('portfolio/addnewgallery', {loggedin : loggedin, isadmin : isadmin})
+        res.render('admin/addnewgallery', {loggedin : loggedin, isadmin : isadmin})
     }
     else
     {

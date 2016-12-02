@@ -20,7 +20,7 @@ router.get('/addpost', (req, res) => {
     let isadmin = req.session.userisadmin == null ? false : true;
     res.render('blog/addpost', { title: 'AlmosLataan Add New Post', loggedin: loggedin, isadmin: isadmin });
 });
-router.get('/viewpost/:postid', (req, res) => {
+router.get('/:postid/:posttitle/', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
     let suppliedpostid = req.params.postid;

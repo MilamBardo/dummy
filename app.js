@@ -37,7 +37,7 @@ app.use(session(sessionOptions));
 const masterRouter = require('./src/routes/index');
 //set-up all app.use()
 app.use('/', masterRouter);
-app.listen(3001);
+//app.listen(3000);
 //LIVE app.listen(8080, '10.128.27.239')
 // app.use(function (err, req, res, next) {
 //   // handle error

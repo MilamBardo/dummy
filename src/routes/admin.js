@@ -82,7 +82,7 @@ router.get('/addnewgallery', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
     if (loggedin && isadmin) {
-        res.render('portfolio/addnewgallery', { loggedin: loggedin, isadmin: isadmin });
+        res.render('admin/addnewgallery', { loggedin: loggedin, isadmin: isadmin });
     }
     else {
         //probably been logged out

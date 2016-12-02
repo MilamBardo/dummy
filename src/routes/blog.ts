@@ -27,7 +27,7 @@ router.get('/addpost', (req, res) => {
     
 });
 
-router.get('/viewpost/:postid', (req, res) => {
+router.get('/:postid/:posttitle/', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
 
