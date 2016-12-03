@@ -17,9 +17,9 @@ block content
                     header
                         h1
                             if (val.posturl)
-                                a(href ="/blog/"+val.id+"/"+val.posturl)= val.posttitle
+                                a(href ="/"+val.posturl+"/"+val.id)= val.posttitle
                             else
-                                a(href ="/blog/"+val.id+"/"+val.posttitle)= val.posttitle
+                                a(href ="/"+val.posttitle+"/"+val.id)= val.posttitle
                         h2
                             time= (moment(val.postdate).format('MMM Do YYYY'))
                     
@@ -34,6 +34,6 @@ block content
                             Label(style="font-size: 0.75em;")!=val.postimagecaption
                         p(class="articlemainparagraph")!=val.postbody
                         if (val.posturl)
-                                a(href ="/blog/"+val.id+"/"+val.posturl) Read More
+                                a(href ="/"+val.posturl+"/"+val.id) Read More
                             else
-                                a(href ="/blog/"+val.id+"/"+val.posttitle) Read More
+                                a(href ="/"+val.posttitle+"/"+val.id) Read More

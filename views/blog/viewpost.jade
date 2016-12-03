@@ -25,7 +25,7 @@ block content
                     p
                         time= (moment(post.postdate).format('MMM Do YYYY'))
                 if mainimage
-                    div
+                    div(class="articleimage")
                         if mainimage.orientation=="L"
                             img(class="articlelandscapeimage", src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
                         else

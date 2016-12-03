@@ -10,6 +10,10 @@ import * as adminRouter from "./admin";
 import * as Users from '../models/Users/User';
 import * as UserRepository from '../repositories/userRepository';
 
+import * as PostRepository from '../repositories/postRepository';
+import * as ImageRepository from '../repositories/imageRepository';
+import * as Posts from '../models/Posts/PostsModule';
+
 //import * as app from '../../app';
 
 
@@ -235,5 +239,44 @@ router.post('/logout', (req:any, res:any, next: any) =>{
 // });
 
   // Export the router
+
+  //Placing this method here rather than in blog router for the purposes of seo and shorter urls
+  router.get('/:posttitle/:postid/', (req, res) => {
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+
+    let suppliedpostid = req.params.postid;
+
+    let postRepos = new PostRepository.postRepository();
+    const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+    promise.then((post  :Posts.Post) => {
+        //var post = data;
+
+        const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+        promisePostImages.then((imagedata  :any) => {
+            let mainimage : any = null;
+            let mainimagefilepath : any = null;
+            if (imagedata != null && imagedata.length >0)
+                {
+                    mainimage = imagedata[0];
+                    mainimagefilepath = "http://almoslataan.com/public/"+imagedata[0].imagefilepath;
+                    //mainimagefilepath = imagedata[0].imagefilepath;
+                }
+            //regeneratesitemap();
+            res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
+        });
+        promisePostImages.catch((err : any) => {
+            // This is never called
+            //console.log('No posts due to error');
+            res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
+        });
+    });
+    promise.catch((err : any) => {
+        // This is never called
+        //console.log('No posts due to error');
+        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
+    });
+});
+
 export = router;
 

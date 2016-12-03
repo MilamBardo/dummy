@@ -27,42 +27,7 @@ router.get('/addpost', (req, res) => {
     
 });
 
-router.get('/:postid/:posttitle/', (req, res) => {
-    let loggedin = req.session.username == null ? false : true;
-    let isadmin = req.session.userisadmin == null ? false : true;
 
-    let suppliedpostid = req.params.postid;
-
-    let postRepos = new PostRepository.postRepository();
-    const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-    promise.then((post  :Posts.Post) => {
-        //var post = data;
-
-        const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
-        promisePostImages.then((imagedata  :any) => {
-            let mainimage : any = null;
-            let mainimagefilepath : any = null;
-            if (imagedata != null && imagedata.length >0)
-                {
-                    mainimage = imagedata[0];
-                    mainimagefilepath = "http://almoslataan.com/public/"+imagedata[0].imagefilepath;
-                    //mainimagefilepath = imagedata[0].imagefilepath;
-                }
-            regeneratesitemap();
-            res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
-        });
-        promisePostImages.catch((err : any) => {
-            // This is never called
-            //console.log('No posts due to error');
-            res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
-        });
-    });
-    promise.catch((err : any) => {
-        // This is never called
-        //console.log('No posts due to error');
-        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
-    });
-});
 
 router.get('/editpost', (req, res) => {
     if (req.session.username && req.session.userisadmin)
@@ -268,7 +233,7 @@ function regeneratesitemap()
             let postdate : Date = post.postdate;
             let posturl = post.posturl != null ? post.posturl : post.posttitle;
             let datestring = moment(postdate).format('YYYY-MM-DD');
-            let blogpost = '<url><loc>http://almoslataan.com/blog/'+post.id.toString()+'/'+posturl+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+            let blogpost = '<url><loc>http://almoslataan.com/'+posturl+'/'+post.id.toString()+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
             sitemapstring = sitemapstring + blogpost;
 
             

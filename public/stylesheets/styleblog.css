@@ -46,7 +46,7 @@ color:black; text-align: center; margin-right: 1%;  text-decoration: none; }
 .articlebackground {background-color: white; padding: 2%;}
 .articleimage{ align-content: center; width:100%;}
 .articlelandscapeimage {width:60%; height:auto; display:block;}
-.articleportraitimage {width:50%; height:auto; display:block;}
+.articleportraitimage {width:30%; height:auto; display:block;}
 .formpost { border: 1px solid black; padding: 20px;}
 
 .bioarticle {padding: 10px; margin:auto; }
