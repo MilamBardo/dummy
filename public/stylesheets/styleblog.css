@@ -22,7 +22,7 @@ a {
 #container{
     width: 100%; height:100%;display:inline-block;}
 
-.navdiv{float:right; width: 20%; color:black}
+.navdiv{float:right; text-align:left; width: 20%; color:black}
 .navvertical{ height: 100%;margin-top: 5%; }
 .navvertical > ul{list-style-type: none; color:black}
 
@@ -37,7 +37,7 @@ color:black; text-align: center; margin-right: 1%;  text-decoration: none; }
 
 .maincontent{float:left; width: 80%}
 
-.article { padding: 3%; border-left: 2px solid black; }
+.article { padding: 3%;  }
 .article heading {color:black; background-color: white;    }
 .article header h1 a {color: black; text-decoration: none; font-size: 0.75em;}
 .article header h1 a:hover { text-decoration: underline; font-size: 0.75em;}
