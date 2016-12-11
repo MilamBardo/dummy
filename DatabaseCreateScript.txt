@@ -150,6 +150,110 @@ ALTER TABLE public.users
 
 
   
+CREATE TABLE public.galleries
+(
+  galleryid SERIAL PRIMARY KEY NOT NULL ,
+  galleryname character varying(200) NOT NULL,
+  isdefault boolean NOT NULL,
+  isprivate boolean NOT NULL,
+  datecreated timestamp without time zone NOT NULL
+)
+  
+
+
+CREATE TABLE public.galleryimages
+(
+  galleryimageid SERIAL PRIMARY KEY,
+  galleryid integer NOT NULL,
+  imageid integer NOT NULL,
+  galleryimageordernumber integer NOT NULL,
+  galleryimagecaption text NOT NULL,
+  sizecontrollingdimension character varying(20) NOT NULL,
+  sizecontrollingpercentage character varying(100) NOT NULL,
+  datecreated timestamp without time zone NOT NULL
+);
+
+  
+-- Table: public.imageinfos
+
+-- DROP TABLE public.imageinfos;
+
+CREATE TABLE public.imageinfos
+(
+  imageid SERIAL PRIMARY KEY,
+  imagename character varying(300) NOT NULL,
+  imagefilepath character varying(500) NOT NULL,
+  imagetitle character varying(500) NOT NULL,
+  imagealt text NOT NULL,
+  datecreated timestamp without time zone NOT NULL,
+  height integer,
+  width integer,
+  orientation character varying(5)
+);
+
+  
+-- Table: public.postimages
+
+-- DROP TABLE public.postimages;
+
+CREATE TABLE public.postimages
+(
+  postimageid SERIAL PRIMARY KEY,
+  postid integer NOT NULL,
+  imageid integer NOT NULL,
+  postimagecaption text,
+  sizecontrollingdimension character varying(20) NOT NULL,
+  sizecontrollingpercentage character varying(100) NOT NULL,
+  imagetype character varying(50) NOT NULL,
+  imagetypeorder integer NOT NULL,
+  datecreated timestamp without time zone NOT NULL
+);
+
+  
+-- Table: public.posts
+
+-- DROP TABLE public.posts;
+
+CREATE TABLE public.posts
+(
+  id SERIAL PRIMARY KEY,
+  posttitle character varying(200) NOT NULL,
+  postbody text NOT NULL,
+  postdate timestamp without time zone NOT NULL,
+  posturl character varying(100)
+);
+  
+ -- Table: public.session
+
+-- DROP TABLE public.session;
+
+CREATE TABLE public.session
+(
+  sid character varying NOT NULL,
+  sess json NOT NULL,
+  expire timestamp(6) without time zone NOT NULL
+);
+
+  
+-- Table: public.users
+
+-- DROP TABLE public.users;
+
+CREATE TABLE public.users
+(
+  id SERIAL PRIMARY KEY,
+  name character varying(200) NOT NULL,
+  encryptedpassword character varying(300) NOT NULL,
+  email character varying(200) NOT NULL,
+  lockedout boolean NOT NULL,
+  loginattempts integer NOT NULL,
+  isadmin boolean NOT NULL DEFAULT false,
+  isverified boolean NOT NULL DEFAULT false,
+  created timestamp with time zone NOT NULL DEFAULT now()
+);
+
+
+  
 
 
   
