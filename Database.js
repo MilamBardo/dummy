@@ -40,10 +40,10 @@ var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@l
 // var query4 = client4.query('ALTER TABLE public.imageinfos ADD height integer null, width integer null, orientation character varying(5) NULL')
 // query4.on('end', function() { client4.end(); });
 
-var client4 = new pg.Client(connectionString);
-client4.connect();
-var query4 = client4.query('ALTER TABLE public.posts ADD posturl character varying (100) NULL')
-query4.on('end', function() { client4.end(); });
+// var client4 = new pg.Client(connectionString);
+// client4.connect();
+// var query4 = client4.query('ALTER TABLE public.posts ADD posturl character varying (100) NULL')
+// query4.on('end', function() { client4.end(); });
 
 // var client5 = new pg.Client(connectionString);
 // client5.connect();
@@ -60,6 +60,15 @@ query4.on('end', function() { client4.end(); });
 // var query5 = client5.query('CREATE TABLE public.postlayouts(id SERIAL PRIMARY KEY, layoutname character varying(200) NOT NULL, imagealt character varying(200) NOT NULL,caption text NOT NULL, caption text NOT NULL, datecreated timestamp without time zone NOT NULL);');
 // query5.on('end', function() { client5.end(); });
 
+var client4 = new pg.Client(connectionString);
+client4.connect();
+var query4 = client4.query('CREATE TABLE  public.postcategory(postcategoryid SERIAL PRIMARY KEY, categoryname character varying(200) NOT NULL)');
+query4.on('end', function() { client4.end(); });
+
+var client4 = new pg.Client(connectionString);
+client4.connect();
+var query4 = client4.query('CREATE TABLE  public.tag(tagid SERIAL PRIMARY KEY, tagname character varying(200) NOT NULL)');
+query4.on('end', function() { client4.end(); });
 
 
 

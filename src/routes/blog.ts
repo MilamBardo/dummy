@@ -212,17 +212,7 @@ function regeneratesitemap()
     //build sitemapstring
     let sitemapstring : string ="";
     sitemapstring += '<?xml version="1.0" encoding="UTF-8"?><urlset xmlns="http://www.sitemaps.org/schemas/sitemap/0.9">';
-    let frontpage : string = '<url><loc>http://almoslataan.com/</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>'
-    let portfolio : string = '<url><loc>http://almoslataan.com/portfolio</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
-    let blog : string = '<url><loc>http://almoslataan.com/blog</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>'
-    let store : string = '<url><loc>http://almoslataan.com/store</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
-    let about : string = '<url><loc>http://almoslataan.com/contact</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
     
-    sitemapstring = sitemapstring + frontpage;
-    sitemapstring = sitemapstring + portfolio;
-    sitemapstring = sitemapstring + blog;
-    sitemapstring = sitemapstring + store;
-    sitemapstring = sitemapstring + about;
 
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getallposts()); });
@@ -238,6 +228,17 @@ function regeneratesitemap()
 
             
         }
+        let frontpage : string = '<url><loc>http://almoslataan.com/</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>'
+        let portfolio : string = '<url><loc>http://almoslataan.com/portfolio</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+        let blog : string = '<url><loc>http://almoslataan.com/blog</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>'
+        let store : string = '<url><loc>http://almoslataan.com/store</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
+        let about : string = '<url><loc>http://almoslataan.com/contact</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
+        
+        sitemapstring = sitemapstring + frontpage;
+        sitemapstring = sitemapstring + portfolio;
+        sitemapstring = sitemapstring + blog;
+        sitemapstring = sitemapstring + store;
+        sitemapstring = sitemapstring + about;
         sitemapstring = sitemapstring +'</urlset>';
         //Create new sitemap
             var fs = require('fs');
