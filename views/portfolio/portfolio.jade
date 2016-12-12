@@ -98,7 +98,7 @@ block content
             {
                 if (child.name == gallery.galleryid)
                 {
-                    child.setAttribute("style", "display: inlineblock; text-decoration: none; margin-right: 2%; border: 1px solid black;");
+                    child.setAttribute("style", "display: inlineblock; text-decoration: none; margin-right: 2%; border: 4px solid pink;");
                 }
                 else
                 {
@@ -196,7 +196,7 @@ block content
             each gallery in allgallerynames
                 //-var gid= !={JSON.stringify(mainportfolio.galleryid)}
                 if gallery.galleryid == "2"
-                    a(href="javascript:void(0)", onclick="viewgallery(this.name);", id="galleryli-"+gallery.galleryid, name=gallery.galleryid, style="display: inlineblock; text-decoration: none; margin-right: 2%; border: 1px solid black;")=gallery.galleryname
+                    a(href="javascript:void(0)", onclick="viewgallery(this.name);", id="galleryli-"+gallery.galleryid, name=gallery.galleryid, style="display: inlineblock; text-decoration: none; margin-right: 2%; border: 4px solid pink;")=gallery.galleryname
                 else
                     a(href="javascript:void(0)", onclick="viewgallery(this.name);", id="galleryli-"+gallery.galleryid, name=gallery.galleryid, style="display: inlineblock; text-decoration: none; margin-right: 2%;")=gallery.galleryname
             

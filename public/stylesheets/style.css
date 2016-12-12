@@ -17,9 +17,9 @@ a {
 #main{position: relative;
     width: 100%;}
 
-nav {width:100%;}
-nav a {font-family: Courier New, Courier, monospace; font-size: 1em; color: black; text-align: center; margin-right: 1%; text-decoration: none;}
-nav a:hover {color:blue; }
+nav {width:100%; }
+nav a {padding:2px; font-family: Courier New, Courier, monospace; font-size: 1em; color: white; text-align: center; margin-right: 1%; text-decoration: none; background-color: black;}
+nav a:hover {color:pink; }
 /* background-image: url("../images/Nav/NavBlank.png"); */
 nav img {margin-right:5%;}
 /*.navlinks{margin-bottom: 40px;}*/
