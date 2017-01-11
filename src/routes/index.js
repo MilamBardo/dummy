@@ -1,15 +1,15 @@
 "use strict";
 /// <reference path='../../typings/index.d.ts'/>
-const express = require('express');
+const express = require("express");
 const expresssession = require('express-session');
 const Promise = require('es6-promise');
 const blogRouter = require("./blog");
 const portfolioRouter = require("./portfolio");
 const uploadsRouter = require("./uploads");
 const adminRouter = require("./admin");
-const Users = require('../models/Users/User');
-const UserRepository = require('../repositories/userRepository');
-const PostRepository = require('../repositories/postRepository');
+const Users = require("../models/Users/User");
+const UserRepository = require("../repositories/userRepository");
+const PostRepository = require("../repositories/postRepository");
 //import * as app from '../../app';
 var router = express.Router();
 router.use('/blog', blogRouter);
@@ -30,6 +30,8 @@ router.get('/', (req, res) => {
         if (req.session.username) {
             userloggedin = true;
         }
+    }
+    function checkReroutes(req, res) {
     }
     res.render('index', { title: 'AlmosLataan Home', loggedin: userloggedin });
 });
@@ -180,10 +182,21 @@ router.post('/logout', (req, res, next) => {
 // });
 // Export the router
 //Placing this method here rather than in blog router for the purposes of seo and shorter urls
-router.get('/:posttitle/:postid/', (req, res) => {
+router.get('/:posttitle/', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
-    let suppliedpostid = req.params.postid;
+    let title = req.params.posttitle;
+    //Get id from title
+    let postid = "";
+    for (var i of title) {
+        if (i == "-") {
+            postid = "";
+        }
+        else {
+            postid += i;
+        }
+    }
+    let suppliedpostid = +postid;
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
     promise.then((post) => {
@@ -197,7 +210,9 @@ router.get('/:posttitle/:postid/', (req, res) => {
                 mainimagefilepath = "http://almoslataan.com/public/" + imagedata[0].imagefilepath;
             }
             //regeneratesitemap();
-            res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath });
+            let posturl = "https://almoslataan.com/" + post.posturl + "-" + postid;
+            let fburl = "https%3A%2F%2Falmoslataan.com%2F" + post.posturl + "-" + postid;
+            res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl: fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath });
         });
         promisePostImages.catch((err) => {
             // This is never called

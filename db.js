@@ -2,13 +2,13 @@
 // /// <reference path='./node_modules/pg-promise/typescript/pg-promise.d.ts'/>
 // /// <reference path='./node_modules/pg-promise/typescript/ext-promise.d.ts'/>
 "use strict";
-const pgPromise = require('pg-promise');
+const pgPromise = require("pg-promise");
 var options = {};
 let pgp = pgPromise(options);
 //LIVE let connectionString : string = process.env.DATABASE_URL || 'postgres://nodeuser:Talanath5@127.0.0.1:5432/Almos';
 let connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@localhost:5432/Almos';
 let dbpool = pgp(connectionString);
-module.exports = { dbpool: dbpool };
+module.exports = { dbpool };
 //import * as pg from 'pg';
 // class dbpool
 // {

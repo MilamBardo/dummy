@@ -46,7 +46,16 @@ block content
                             cols="70", 
                             rows="5"
                             )
-
+            div
+                label Post Excerpt:
+                br
+            div
+                textarea(
+                    name="postexcerpt", 
+                    cols="120", 
+                    rows="10",
+                    maxlength="500"
+                )=post.postexcerpt
             div
                 label Post Body:
                 br

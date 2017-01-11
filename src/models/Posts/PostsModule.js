@@ -3,8 +3,9 @@ class Post {
     //postimages: Array< ImageInfo>;
     //_postimage : Images.ImageInfo;
     //constructor(postTitle : string, postBody : string);
-    constructor(postTitle, postBody, id, postURL, postDate) {
+    constructor(postTitle, postBody, postExcerpt, id, postURL, postDate) {
         this.setPostTitle(postTitle);
+        this.setPostExcerpt(postExcerpt);
         this.postbody = postBody;
         this.id = id != null ? id : null;
         this.postdate = postDate != null ? postDate : new Date();
@@ -12,6 +13,15 @@ class Post {
     setPostTitle(postTitle) {
         this.posttitle = postTitle;
         this.posturl = postTitle.replace(/\s/g, "-");
+    }
+    setPostExcerpt(postExcerpt) {
+        if (postExcerpt == "" || postExcerpt == null) {
+            this.postexcerpt = postExcerpt;
+        }
+        else {
+            let stringlength = postExcerpt.length < 500 ? postExcerpt.length - 1 : 499;
+            this.postexcerpt = postExcerpt.substring(0, stringlength);
+        }
     }
 }
 exports.Post = Post;

@@ -10,6 +10,9 @@ block content
             "headline": "#{post.posttitle}",
             "publisher": {"@type":"Organization", "name": "AlmosLataan", "logo":{"URL": ""}},
             "datePublished": "#{post.postdate}"}
+    //- div(class="fb-share-button", data-href="https://almoslataan.com/The-Distracting-Disinformation-War-12", data-layout="button_count", data-size="small", data-mobile-iframe="true")
+    //-     a(class="fb-xfbml-parse-ignore", target="_blank", href="https://www.facebook.com/sharer/sharer.php?u=https%3A%2F%2Falmoslataan.com%2FThe-Distracting-Disinformation-War-12&amp;src=sdkpreparse") Share
+    
     if alertmessage
         p(style="color: red")=alertmessage
     if post
@@ -24,6 +27,7 @@ block content
                     h1= post.posttitle
                     p
                         time= (moment(post.postdate).format('MMM Do YYYY'))
+                    
                 if mainimage
                     div(class="articleimage")
                         if mainimage.orientation=="L"
@@ -35,6 +39,13 @@ block content
                             Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
                             br
                             Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
+                br
+                div(class="fb-share-button", data-href=posturl, data-layout="button_count", data-size="small", data-mobile-iframe="true")
+                    a(class="fb-xfbml-parse-ignore", target="_blank", href="https://www.facebook.com/sharer/sharer.php?u="+fburl+"&amp;src=sdkpreparse") Share
+                br
                 p(class="articlemainparagraph")!=post.postbody
+                br
+                div(class="fb-share-button", data-href=posturl, data-layout="button_count", data-size="small", data-mobile-iframe="true")
+                    a(class="fb-xfbml-parse-ignore", target="_blank", href="https://www.facebook.com/sharer/sharer.php?u="+fburl+"&amp;src=sdkpreparse") Share
             //- div(class="articleAdvertisement" style="width:20%, float:right;display:inline-block; ;")
             //-    img(src="/uploads/Venetian.jpg"  alt="Tiles above and below and Van Gogh Style Tree")

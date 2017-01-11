@@ -46,6 +46,11 @@ router.get('/', (req, res) => {
     }
   }
 
+function checkReroutes(req : any, res : any)
+{
+
+}
+
 res.render('index', { title: 'AlmosLataan Home', loggedin: userloggedin });
    
 });
@@ -241,11 +246,23 @@ router.post('/logout', (req:any, res:any, next: any) =>{
   // Export the router
 
   //Placing this method here rather than in blog router for the purposes of seo and shorter urls
-  router.get('/:posttitle/:postid/', (req, res) => {
+  router.get('/:posttitle/', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
+    let title :string = req.params.posttitle;
 
-    let suppliedpostid = req.params.postid;
+    //Get id from title
+    let postid : string = "";
+    for (var i of title)
+    {
+      if (i == "-") {
+        postid = "";
+      }
+      else{
+        postid += i;
+      }
+    }
+    let suppliedpostid = +postid;
 
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
@@ -263,7 +280,9 @@ router.post('/logout', (req:any, res:any, next: any) =>{
                     //mainimagefilepath = imagedata[0].imagefilepath;
                 }
             //regeneratesitemap();
-            res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
+            let posturl : string = "https://almoslataan.com/"+post.posturl+"-"+postid;
+            let fburl : string = "https%3A%2F%2Falmoslataan.com%2F"+post.posturl+"-"+postid;
+            res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl : fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
         });
         promisePostImages.catch((err : any) => {
             // This is never called

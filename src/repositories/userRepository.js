@@ -1,8 +1,8 @@
 //import sqlProvider = require('../sql');
 //var sql = sqlProvider.products;
 "use strict";
-const Users = require('../models/Users/User');
-const dbProvider = require('../../db');
+const Users = require("../models/Users/User");
+const dbProvider = require("../../db");
 class userRepository {
     constructor() {
         this.db = dbProvider.dbpool;

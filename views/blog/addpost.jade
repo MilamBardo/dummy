@@ -2,8 +2,6 @@ extends ../layout
 
 block content
     form(name="addpost", action="/blog/addpost", method="post", class="formpost")
-        
-        
         div
             label Post Title:
         div
@@ -18,7 +16,8 @@ block content
             textarea(
                 name="postexcerpt", 
                 cols="120", 
-                rows="10"
+                rows="10",
+                maxlength="500"
             )
         div
             label Post Body:

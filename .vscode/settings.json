@@ -2,5 +2,5 @@
 {
       "editor.wordWrap": true,
       "editor.tabCompletion": true,
-      "editor.renderIndentGuides": true,
+      "editor.renderIndentGuides": true
 }

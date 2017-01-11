@@ -1,11 +1,11 @@
 /// <reference path='./typings/index.d.ts'/>
 "use strict";
-const path = require('path');
-const express = require('express');
+const path = require("path");
+const express = require("express");
 // import * as favicon from 'serve-favicon';
 // import * as logger from 'morgan';
 // import * as cookieParser = 'cookie-parser';
-const bodyParser = require('body-parser');
+const bodyParser = require("body-parser");
 //import * as session from 'express-session';
 let app = express();
 app.locals.moment = require('moment');
@@ -34,7 +34,7 @@ var sessionOptions = {
 };
 app.set('trust proxy', 1); //allows to pass proxy
 app.use(session(sessionOptions));
-const masterRouter = require('./src/routes/index');
+const masterRouter = require("./src/routes/index");
 //set-up all app.use()
 app.use('/', masterRouter);
 //app.listen(3000);

@@ -19,6 +19,38 @@ router.get('/', (req, res) => {
 
 });
 
+//reoutes needed
+router.get('/:posttitle/:postnumber/', (req, res) => {
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+    let title :string = req.params.posttitle;
+    let postnumber :string = req.params.postnumber;
+
+     if (title = "viewpost")
+    {
+        let suppliedpostid = +postnumber;
+        
+         let postRepos = new PostRepository.postRepository();
+        const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+        promise.then((post  :Posts.Post) => {
+
+            const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+            promisePostImages.then((imagedata  :any) => {
+                let mainimage : any = null;
+                let mainimagefilepath : any = null;
+                if (imagedata != null && imagedata.length >0)
+                    {
+                        mainimage = imagedata[0];
+                        mainimagefilepath = "http://almoslataan.com/public/"+imagedata[0].imagefilepath;
+                        //mainimagefilepath = imagedata[0].imagefilepath;
+                    }
+                    //regeneratesitemap();
+                    res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
+                });
+        });
+    }
+});
+
 router.get('/addpost', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
@@ -41,7 +73,7 @@ router.get('/editpost', (req, res) => {
                 promise2.then((postimages:any) => { 
                     const promise3 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.getallimages()); });
                     promise3.then((images:any) => {
-                        if (postimages.length == 0) postimages=null;
+                        if (postimages == null || postimages.length == 0) postimages=null;
                         res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, postimages: postimages, portfolioimages: images});
                     });
                     promise3.catch((err : any) => {
@@ -61,6 +93,7 @@ router.get('/editpost', (req, res) => {
 router.post('/editpost', (req:any, res:any, next: any) =>{
     let suppliedpostid = req.body.postid;
     let suppliedposttitle = req.body.posttitle;
+    let suppliedposrexcerpt = req.body.postexcerpt;
     let suppliedpostbody = req.body.postbody;
     let associatedpostimageid = req.body.associatedpostimage;
     let currentpostimageid = req.body.currentpostimage;
@@ -73,6 +106,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
             
             post.setPostTitle(suppliedposttitle);
             post.postbody=suppliedpostbody;
+            post.postexcerpt = suppliedposrexcerpt;
 
             //UPDATE POST
             const promiseUpdate = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.updatepost(post)); });
@@ -157,9 +191,10 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
 
 router.post('/addpost', (req:any, res:any, next: any) =>{
     let suppliedposttitle = req.body.posttitle;
+    let suppliedpostexcerpt = req.body.postexcerpt;
     let suppliedpostbody = req.body.postbody;
 
-    let newPost = new Posts.Post(suppliedposttitle, suppliedpostbody);
+    let newPost = new Posts.Post(suppliedposttitle, suppliedpostbody, suppliedpostexcerpt);
     let postRepos = new PostRepository.postRepository();
 
     const promise = new Promise.Promise((resolve :any , reject : any) => { resolve(postRepos.add(newPost)); });
@@ -223,20 +258,20 @@ function regeneratesitemap()
             let postdate : Date = post.postdate;
             let posturl = post.posturl != null ? post.posturl : post.posttitle;
             let datestring = moment(postdate).format('YYYY-MM-DD');
-            let blogpost = '<url><loc>http://almoslataan.com/'+posturl+'/'+post.id.toString()+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+            let blogpost = '<url><loc>https://almoslataan.com/'+posturl+'-'+post.id.toString()+'</loc><lastmod>'+datestring+'</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
             sitemapstring = sitemapstring + blogpost;
 
             
         }
-        let frontpage : string = '<url><loc>http://almoslataan.com/</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>'
-        let portfolio : string = '<url><loc>http://almoslataan.com/portfolio</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
-        let blog : string = '<url><loc>http://almoslataan.com/blog</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.9</priority></url>'
-        let store : string = '<url><loc>http://almoslataan.com/store</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
-        let about : string = '<url><loc>http://almoslataan.com/contact</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
+        let frontpage : string = '<url><loc>https://almoslataan.com/</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.5</priority></url>'
+        let portfolio : string = '<url><loc>https://almoslataan.com/portfolio</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.5</priority></url>'
+        //let blog : string = '<url><loc>https://almoslataan.com/blog</loc><lastmod>2016-09-27</lastmod><changefreq>weekly</changefreq><priority>0.4</priority></url>'
+        let store : string = '<url><loc>https://almoslataan.com/store</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
+        let about : string = '<url><loc>https://almoslataan.com/contact</loc><lastmod>2016-09-27</lastmod><changefreq>monthly</changefreq><priority>0.1</priority></url>'
         
         sitemapstring = sitemapstring + frontpage;
         sitemapstring = sitemapstring + portfolio;
-        sitemapstring = sitemapstring + blog;
+        //sitemapstring = sitemapstring + blog;
         sitemapstring = sitemapstring + store;
         sitemapstring = sitemapstring + about;
         sitemapstring = sitemapstring +'</urlset>';

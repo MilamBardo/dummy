@@ -16,7 +16,7 @@ export class postRepository
 
         add (post: Posts.Post)
         {
-                return this.db.one('INSERT INTO posts(posttitle, postURL, postbody, postdate) VALUES($1, $2, $3, $4) RETURNING id', [post.posttitle, post.posturl, post.postbody, post.postdate]);
+                return this.db.one('INSERT INTO posts(posttitle, postURL, postexcerpt, postbody, postdate) VALUES($1, $2, $3, $4, $5) RETURNING id', [post.posttitle, post.posturl, post.postexcerpt, post.postbody, post.postdate]);
         };
         addpostimage(postimage : Posts.PostImage)
         {
@@ -31,7 +31,7 @@ export class postRepository
         }
         updatepost(post: Posts.Post)
         {
-               return this.db.result('update posts set posttitle = $1, postURL=$2, postbody=$3 where id=$4', [post.posttitle, post.posturl,post.postbody, post.id]);
+               return this.db.result('update posts set posttitle = $1, postURL=$2, postexcerpt=$3, postbody=$4 where id=$5', [post.posttitle, post.posturl, post.postexcerpt, post.postbody, post.id]);
         };
 
         //GETS
@@ -40,11 +40,12 @@ export class postRepository
                 return new Promise( (resolve:any, reject:any) => {resolve(this.db.oneOrNone('SELECT * FROM posts WHERE id =$1', [postid]))}).then((post:any) => {
                         let mappedpost : Posts.Post;
                         let ptitle : string = post.posttitle;
+                        let pexcerpt: string = post.postexcerpt;
                         let pbody: string = post.postbody;
                         let id:number = post.id;
                         let url:string = post.posturl;
                         let pdate: Date = post.postdate
-                        mappedpost = new Posts.Post(ptitle, pbody, id, url, pdate);
+                        mappedpost = new Posts.Post(ptitle, pbody, pexcerpt, id, url, pdate);
                         return mappedpost;
                 });
         };

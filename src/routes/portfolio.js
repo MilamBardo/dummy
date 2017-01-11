@@ -1,8 +1,8 @@
 /// <reference path='../../typings/index.d.ts'/>
 "use strict";
 const express = require("express");
-const GalleryRepository = require('../repositories/galleryRepository');
-const Images = require('../models/Images/ImagesModule');
+const GalleryRepository = require("../repositories/galleryRepository");
+const Images = require("../models/Images/ImagesModule");
 const expresssession = require('express-session');
 const Promise = require('es6-promise');
 var multer = require('multer');
@@ -22,7 +22,7 @@ router.get('/addportfolioimage', (req, res) => {
     if (loggedin && isadmin) {
         let galleryid = req.query.galleryid;
         let gallerytotal = req.query.gallerytotal;
-        res.render('portfolio/addportfolioimage', { loggedin: loggedin, isadmin: isadmin, portfoliogalleryid: galleryid, gallerytotal: gallerytotal });
+        res.render('portfolio/addportfolioimage', { loggedin, isadmin, portfoliogalleryid: galleryid, gallerytotal: gallerytotal });
     }
 });
 router.post('/fetchGallery', (req, res) => {

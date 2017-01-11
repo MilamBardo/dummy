@@ -1,9 +1,9 @@
 /// <reference path='../../typings/index.d.ts'/>
 "use strict";
 const express = require("express");
-const ImageRepository = require('../repositories/imageRepository');
-const GalleryRepository = require('../repositories/galleryRepository');
-const Images = require('../models/Images/ImagesModule');
+const ImageRepository = require("../repositories/imageRepository");
+const GalleryRepository = require("../repositories/galleryRepository");
+const Images = require("../models/Images/ImagesModule");
 const expresssession = require('express-session');
 const Promise = require('es6-promise');
 var multer = require('multer');

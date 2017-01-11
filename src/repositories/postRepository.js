@@ -1,14 +1,14 @@
 /// <reference path='../../typings/globals/pgpromise/pg-promise.d.ts' />
 /// <reference path='../../typings/index.d.ts'/>
 "use strict";
-const Posts = require('../models/Posts/PostsModule');
-const dbProvider = require('../../db');
+const Posts = require("../models/Posts/PostsModule");
+const dbProvider = require("../../db");
 class postRepository {
     constructor() {
         this.db = dbProvider.dbpool;
     }
     add(post) {
-        return this.db.one('INSERT INTO posts(posttitle, postURL, postbody, postdate) VALUES($1, $2, $3, $4) RETURNING id', [post.posttitle, post.posturl, post.postbody, post.postdate]);
+        return this.db.one('INSERT INTO posts(posttitle, postURL, postexcerpt, postbody, postdate) VALUES($1, $2, $3, $4, $5) RETURNING id', [post.posttitle, post.posturl, post.postexcerpt, post.postbody, post.postdate]);
     }
     ;
     addpostimage(postimage) {
@@ -21,7 +21,7 @@ class postRepository {
         return this.db.result('UPDATE postimages SET imageid = $1, postimagecaption = $2 WHERE postid=$3', [postimage.imageid, postimage.postimagecaption, postimage.postid]);
     }
     updatepost(post) {
-        return this.db.result('update posts set posttitle = $1, postURL=$2, postbody=$3 where id=$4', [post.posttitle, post.posturl, post.postbody, post.id]);
+        return this.db.result('update posts set posttitle = $1, postURL=$2, postexcerpt=$3, postbody=$4 where id=$5', [post.posttitle, post.posturl, post.postexcerpt, post.postbody, post.id]);
     }
     ;
     //GETS
@@ -29,11 +29,12 @@ class postRepository {
         return new Promise((resolve, reject) => { resolve(this.db.oneOrNone('SELECT * FROM posts WHERE id =$1', [postid])); }).then((post) => {
             let mappedpost;
             let ptitle = post.posttitle;
+            let pexcerpt = post.postexcerpt;
             let pbody = post.postbody;
             let id = post.id;
             let url = post.posturl;
             let pdate = post.postdate;
-            mappedpost = new Posts.Post(ptitle, pbody, id, url, pdate);
+            mappedpost = new Posts.Post(ptitle, pbody, pexcerpt, id, url, pdate);
             return mappedpost;
         });
     }

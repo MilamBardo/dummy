@@ -2,7 +2,7 @@
 /// <reference path='../../typings/index.d.ts'/>
 "use strict";
 //import * as GalleryImages from '../models/Images/GalleryImage';
-const dbProvider = require('../../db');
+const dbProvider = require("../../db");
 class imageRepository {
     constructor() {
         this.db = dbProvider.dbpool;

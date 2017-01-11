@@ -5,16 +5,18 @@ export class Post {
     id : number;
     posttitle : string;
     posturl : string;
+    postexcerpt : string;
     postbody : string;
     postdate : Date; 
-    image :  Images.ImageInfo
+    image :  Images.ImageInfo;
     //postimages: Array< ImageInfo>;
     //_postimage : Images.ImageInfo;
     
   //constructor(postTitle : string, postBody : string);
-  constructor(postTitle : string, postBody : string, id? : number, postURL? : string, postDate? : Date)
+  constructor(postTitle : string, postBody : string, postExcerpt : string,  id? : number, postURL? : string, postDate? : Date)
   {
     this.setPostTitle(postTitle);
+    this.setPostExcerpt(postExcerpt);
     this.postbody = postBody;
     this.id = id != null ? id : null;
     this.postdate = postDate != null ? postDate : new Date();
@@ -25,6 +27,19 @@ export class Post {
   {
     this.posttitle = postTitle;
     this.posturl = postTitle.replace(/\s/g, "-");
+  }
+
+  public setPostExcerpt(postExcerpt : string)
+  {
+    if (postExcerpt == "" || postExcerpt == null) 
+    {
+      this.postexcerpt = postExcerpt;
+    }
+    else 
+    {
+      let stringlength : number = postExcerpt.length < 500 ? postExcerpt.length - 1 : 499;
+      this.postexcerpt = postExcerpt.substring(0, stringlength);
+    }
   }
 
   // public getPostTitle()
