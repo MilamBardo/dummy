@@ -27,6 +27,10 @@ export class galleryRepository
     };
 
     //UPDATES
+    updategallery(gallery: Images.Gallery)
+    {
+             return this.db.result('UPDATE galleries SET galleryname = $1, isdefault = $2, isprivate = $3 WHERE galleryid = $4',[gallery.galleryname, gallery.isdefault, gallery.isprivate, gallery.galleryid]);
+    }
     updategalleryimage(galleryimage: Images.GalleryImage)
     {
             return this.db.result('UPDATE galleryimages SET galleryimagecaption = $1, galleryimageordernumber = $2, sizecontrollingdimension = $3, sizecontrollingpercentage=$4 WHERE galleryimageid=$5',[galleryimage.galleryimagecaption, galleryimage.galleryimageordernumber, galleryimage.sizecontrollingdimension, galleryimage.sizecontrollingpercentage, galleryimage.galleryimageid]);
@@ -45,11 +49,25 @@ export class galleryRepository
     //GETS
     getgallerybyid(id : number)
     {
-        return this.db.oneOrNone('SELECT * FROM galleries where galleryid=$1', [id]);
+        //return this.db.oneOrNone('SELECT * FROM galleries where galleryid=$1', [id]);
+        return new Promise( (resolve:any, reject:any) => {resolve(this.db.oneOrNone('SELECT * FROM galleries where galleryid=$1', [id]))}).then((gallery:any) => {
+                        let mappedgallery : Images.Gallery;
+                        let gid:number = gallery.galleryid;
+                        let gname : string = gallery.galleryname;
+                        let gisdefault: boolean = gallery.isdefault;
+                        let gisprivate: boolean = gallery.isprivate;
+                        let gdatecreated: Date = gallery.datecreated;
+                        mappedgallery = new Images.Gallery(gname, gid, gisdefault, gisprivate, gdatecreated);
+                        return mappedgallery;
+                });
     };
     getallgalleries()
     {
             return this.db.manyOrNone('SELECT * FROM galleries');
+    };
+    getallnonprivategalleries()
+    {
+            return this.db.manyOrNone('SELECT * FROM galleries WHERE isprivate = false');
     };
     getdefaultgallery()
     {

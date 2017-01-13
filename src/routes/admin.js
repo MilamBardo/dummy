@@ -10,11 +10,18 @@ var multer = require('multer');
 var upload = multer({ dest: 'uploads/' });
 let router = express.Router();
 router.get('/', (req, res) => {
-    try {
-        displayadminpanel(req, res, null);
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+    if (loggedin && isadmin) {
+        try {
+            displayadminpanel(req, res, null);
+        }
+        catch (err) {
+            throw new Error("caught an error");
+        }
     }
-    catch (err) {
-        throw new Error("caught an error");
+    else {
+        res.render('index', { title: 'AlmosLataan Home', loggedin: false });
     }
 });
 function displayadminpanel(req, res, err) {
@@ -23,13 +30,20 @@ function displayadminpanel(req, res, err) {
     if (loggedin && isadmin) {
         //load gallery list
         let galleryRepos = new GalleryRepository.galleryRepository();
+        let imageRepos = new ImageRepository.imageRepository();
         const promise = new Promise.Promise((resolve, reject) => { resolve(galleryRepos.getallgalleries()); });
         promise.then((galleryresult) => {
-            res.render('admin/adminpanel', { title: 'AlmosLataan Admin', galleries: galleryresult, errmsg: err });
-            promise.catch((err) => {
-                throw err;
+            const promiseImages = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getallimages()); });
+            promiseImages.then((imagelist) => {
+                res.render('admin/adminpanel', { title: 'AlmosLataan Admin', galleries: galleryresult, imagelist: imagelist, errmsg: err });
             });
         });
+        promise.catch((err) => {
+            throw err;
+        });
+    }
+    else {
+        res.render('index', { title: 'AlmosLataan Home', loggedin: false });
     }
 }
 router.post('/uploadimage', upload.single('file'), (req, res, next) => {
@@ -40,6 +54,7 @@ router.post('/uploadimage', upload.single('file'), (req, res, next) => {
         let alttext = req.body.alttext;
         let imagetitle = req.body.imagetitle;
         let imagecaption = req.body.imagecaption;
+        let imagebuylink = req.body.imagebuylink;
         var path = require('path'), fs = require('fs');
         let tempPath = req.file.path;
         let tempBasename = path.basename(tempPath);
@@ -57,7 +72,7 @@ router.post('/uploadimage', upload.single('file'), (req, res, next) => {
                     fs.rename(tempPath, targetPath, function (err) {
                         if (err)
                             throw err;
-                        let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle, imgheight, imgwidth);
+                        let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle, imgheight, imgwidth, imagebuylink);
                         const promise = new Promise.Promise((resolve, reject) => { resolve(imageRepos.addimageinfo(imageinfo)); });
                         promise.then((imageresult) => {
                             displayadminpanel(req, res, null);
@@ -76,6 +91,56 @@ router.post('/uploadimage', upload.single('file'), (req, res, next) => {
                 console.error("Only .jpg files are allowed!");
             });
         }
+    }
+});
+router.get('/editimage', (req, res) => {
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+    if (loggedin && isadmin) {
+        let imageid = req.query.imagelist;
+        let imageRepos = new ImageRepository.imageRepository();
+        const promiseGet = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getimageinfobyimageid(imageid)); });
+        promiseGet.then((imageinfo) => {
+            res.render('admin/editimage', { loggedin: loggedin, isadmin: isadmin, image: imageinfo });
+        });
+        promiseGet.catch((err) => {
+            //PLEASE WRITE A FUCKING ERROR LOG TABLE
+            throw err;
+        });
+    }
+    else {
+        res.render('index', { title: 'AlmosLataan Home', loggedin: false });
+    }
+});
+router.post('/editimage', upload.single('file'), (req, res, next) => {
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+    if (loggedin && isadmin) {
+        let imageid = req.body.imageid;
+        //let imagename = req.body.imagename;
+        let alttext = req.body.alttext;
+        let imagetitle = req.body.imagetitle;
+        //let imagecaption = req.body.imagecaption;
+        let imagebuylink = req.body.imagebuylink;
+        let imageRepos = new ImageRepository.imageRepository();
+        const promiseGet = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getimageinfobyimageid(imageid)); });
+        promiseGet.then((masterimage) => {
+            masterimage.imagealt = alttext;
+            masterimage.imagetitle = imagetitle;
+            masterimage.imagebuylink = imagebuylink;
+            const promiseUpdate = new Promise.Promise((resolve, reject) => { resolve(imageRepos.updateimageinfo(masterimage)); });
+            promiseUpdate.then((result) => {
+                displayadminpanel(req, res, masterimage.imagename + "updated");
+            });
+            promiseUpdate.catch((err) => {
+                //PLEASE WRITE A FUCKING ERROR LOG TABLE
+                throw err;
+            });
+        });
+        promiseGet.catch((err) => {
+            //PLEASE WRITE A FUCKING ERROR LOG TABLE
+            throw err;
+        });
     }
 });
 router.get('/addnewgallery', (req, res) => {
@@ -126,48 +191,50 @@ router.post('/addnewgallery', (req, res, next) => {
         }
     }
 });
-router.get('/editgallery', (req, res) => {
+router.post('/editgallery', (req, res, next) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
-    let galleryid = req.query.gallerylist;
+    let galleryid = req.body.galleryid;
+    let galleryname = req.body.galleryname;
+    let galleryisprivate = req.body.galleryisprivate == "on" ? true : false;
+    ;
+    let isdefault = req.body.isdefault == "on" ? true : false;
+    ;
     let galleryRepos = new GalleryRepository.galleryRepository();
     let imageRepos = new ImageRepository.imageRepository();
     if (loggedin && isadmin && galleryid != undefined) {
         //fetch gallery
         const promiseGetGallery = new Promise.Promise((resolve, reject) => { resolve(galleryRepos.getgallerybyid(galleryid)); });
         promiseGetGallery.then((gallery) => {
-            if (gallery == undefined || gallery == null) {
-                displayadminpanel(res, req, "Cannot edit gallery as gallery not found");
-            }
-            const promiseGetGalleryImages = new Promise.Promise((resolve, reject) => { resolve(galleryRepos.getimagesbygalleryid(galleryid)); });
-            promiseGetGalleryImages.then((galleryimages) => {
-                //Check for further other Images
-                const promiseGetOtherImages = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getallimages()); });
-                promiseGetOtherImages.then((otherimages) => {
-                    let remaining = [];
-                    for (var oimage of otherimages) {
-                        var found = false;
-                        for (var gimage of galleryimages) {
-                            if (oimage.imageid == gimage.imageid) {
-                                found = true;
-                            }
-                        }
-                        if (!found) {
-                            remaining.push(oimage);
-                        }
-                    }
-                    //Have all information so display
-                    res.render('admin/editgallery', { loggedin: loggedin, isadmin: isadmin, gallery: gallery, galleryimages: galleryimages, otherimages: remaining });
+            if (gallery) {
+                gallery.galleryname = galleryname;
+                gallery.isdefault = isdefault;
+                gallery.isprivate = galleryisprivate;
+                const promiseUpdate = new Promise.Promise((resolve, reject) => { resolve(galleryRepos.updategallery(gallery)); });
+                promiseUpdate.then((postupdated) => {
+                    fetchGallery(req, res, galleryid);
                 });
-            });
-            promiseGetGalleryImages.catch((err) => {
-                throw err;
-            });
+                promiseUpdate.catch((err) => {
+                    throw err;
+                });
+            }
+            else {
+                //probably been logged out
+                displayadminpanel(req, res, "cannot edit gallery");
+            }
         });
-        //fetch gallery pictures
         promiseGetGallery.catch((err) => {
             throw err;
         });
+    }
+});
+router.get('/editgallery', (req, res) => {
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+    let galleryid = req.query.gallerylist;
+    if (loggedin && isadmin && galleryid != undefined) {
+        //fetch gallery
+        fetchGallery(req, res, galleryid);
     }
     else {
         //probably been logged out
@@ -258,5 +325,45 @@ router.post('fetchimage', (req, res) => {
         var imageid = imagerequired.imageid;
     }
 });
+function fetchGallery(req, res, galleryid) {
+    let loggedin = req.session.username == null ? false : true;
+    let isadmin = req.session.userisadmin == null ? false : true;
+    let galleryRepos = new GalleryRepository.galleryRepository();
+    let imageRepos = new ImageRepository.imageRepository();
+    const promiseGetGallery = new Promise.Promise((resolve, reject) => { resolve(galleryRepos.getgallerybyid(galleryid)); });
+    promiseGetGallery.then((gallery) => {
+        if (gallery == undefined || gallery == null) {
+            displayadminpanel(res, req, "Cannot edit gallery as gallery not found");
+        }
+        const promiseGetGalleryImages = new Promise.Promise((resolve, reject) => { resolve(galleryRepos.getimagesbygalleryid(galleryid)); });
+        promiseGetGalleryImages.then((galleryimages) => {
+            //Check for further other Images
+            const promiseGetOtherImages = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getallimages()); });
+            promiseGetOtherImages.then((otherimages) => {
+                let remaining = [];
+                for (var oimage of otherimages) {
+                    var found = false;
+                    for (var gimage of galleryimages) {
+                        if (oimage.imageid == gimage.imageid) {
+                            found = true;
+                        }
+                    }
+                    if (!found) {
+                        remaining.push(oimage);
+                    }
+                }
+                //Have all information so display
+                res.render('admin/editgallery', { loggedin: loggedin, isadmin: isadmin, gallery: gallery, galleryimages: galleryimages, otherimages: remaining });
+            });
+        });
+        promiseGetGalleryImages.catch((err) => {
+            throw err;
+        });
+    });
+    //fetch gallery pictures
+    promiseGetGallery.catch((err) => {
+        throw err;
+    });
+}
 module.exports = router;
 //# sourceMappingURL=admin.js.map

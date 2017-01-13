@@ -1,6 +1,7 @@
 /// <reference path='../../typings/globals/pgpromise/pg-promise.d.ts' />
 /// <reference path='../../typings/index.d.ts'/>
 "use strict";
+const Images = require("../models/Images/ImagesModule");
 //import * as GalleryImages from '../models/Images/GalleryImage';
 const dbProvider = require("../../db");
 class galleryRepository {
@@ -17,6 +18,9 @@ class galleryRepository {
     }
     ;
     //UPDATES
+    updategallery(gallery) {
+        return this.db.result('UPDATE galleries SET galleryname = $1, isdefault = $2, isprivate = $3 WHERE galleryid = $4', [gallery.galleryname, gallery.isdefault, gallery.isprivate, gallery.galleryid]);
+    }
     updategalleryimage(galleryimage) {
         return this.db.result('UPDATE galleryimages SET galleryimagecaption = $1, galleryimageordernumber = $2, sizecontrollingdimension = $3, sizecontrollingpercentage=$4 WHERE galleryimageid=$5', [galleryimage.galleryimagecaption, galleryimage.galleryimageordernumber, galleryimage.sizecontrollingdimension, galleryimage.sizecontrollingpercentage, galleryimage.galleryimageid]);
     }
@@ -28,11 +32,25 @@ class galleryRepository {
     }
     //GETS
     getgallerybyid(id) {
-        return this.db.oneOrNone('SELECT * FROM galleries where galleryid=$1', [id]);
+        //return this.db.oneOrNone('SELECT * FROM galleries where galleryid=$1', [id]);
+        return new Promise((resolve, reject) => { resolve(this.db.oneOrNone('SELECT * FROM galleries where galleryid=$1', [id])); }).then((gallery) => {
+            let mappedgallery;
+            let gid = gallery.galleryid;
+            let gname = gallery.galleryname;
+            let gisdefault = gallery.isdefault;
+            let gisprivate = gallery.isprivate;
+            let gdatecreated = gallery.datecreated;
+            mappedgallery = new Images.Gallery(gname, gid, gisdefault, gisprivate, gdatecreated);
+            return mappedgallery;
+        });
     }
     ;
     getallgalleries() {
         return this.db.manyOrNone('SELECT * FROM galleries');
+    }
+    ;
+    getallnonprivategalleries() {
+        return this.db.manyOrNone('SELECT * FROM galleries WHERE isprivate = false');
     }
     ;
     getdefaultgallery() {

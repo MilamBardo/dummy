@@ -1,6 +1,6 @@
 "use strict";
 class ImageInfo {
-    constructor(filename, path, alt, title, height, width) {
+    constructor(filename, path, alt, title, height, width, imageid, buylink) {
         this.imagename = filename;
         this.imagefilepath = path;
         this.imagealt = alt;
@@ -8,6 +8,8 @@ class ImageInfo {
         this.datecreated = new Date();
         this.height = height;
         this.width = width;
+        this.imageid = imageid == null ? 0 : imageid;
+        this.imagebuylink = buylink == null ? null : buylink;
         if (height == width) {
             this.orientation = "S";
         } //square
@@ -32,10 +34,11 @@ class GalleryImage {
 }
 exports.GalleryImage = GalleryImage;
 class Gallery {
-    constructor(name) {
+    constructor(name, id, isdefault, isprivate, datecreated) {
         this.galleryname = name;
-        this.isdefault = false;
-        this.isprivate = false;
+        this.galleryid = id == null ? 0 : id;
+        this.isdefault = isdefault == null ? false : isdefault;
+        this.isprivate = isprivate == null ? false : isprivate;
         this.datecreated = new Date();
     }
 }

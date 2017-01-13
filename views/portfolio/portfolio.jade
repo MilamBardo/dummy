@@ -42,6 +42,7 @@ block content
             newimage.setAttribute("src", fullimage.imagefilepath);
             newimage.setAttribute("alt", fullimage.imagealt);
             newimage.setAttribute("title", fullimage.imagealt);
+            newimage.setAttribute("imagebuylink", fullimage.imagebuylink);
             //- if (fullimage.orientation == "P")
             //- {
             //-     newimage.setAttribute("style", "width:40%; height:auto;");
@@ -52,6 +53,15 @@ block content
 
             newdiv.appendChild(newimage);
             portfolioviewerdiv.appendChild(newdiv);
+            if (fullimage.imagebuylink != undefined && fullimage.imagebuylink != "")
+                {
+                    var purchasebutton = document.createElement("a");
+                    purchasebutton.setAttribute("href", fullimage.imagebuylink );
+                    purchasebutton.setAttribute("class", "purchasebutton purchasebutton1");
+                    purchasebutton.setAttribute("style", "float:right;")
+                    purchasebutton.text = "Purchase";
+                    portfolioviewerdiv.appendChild(purchasebutton);
+                }
             
 
         }
@@ -149,14 +159,28 @@ block content
                 mainimage.setAttribute("src", gallery.galleryimages[0].imagefilepath);
                 mainimage.setAttribute("alt", gallery.galleryimages[0].imagealt);
                 mainimage.setAttribute("title", gallery.galleryimages[0].imagealt);
+                
 
                 if (gallery.galleryimages[0].orientation == "P")
                 {
                     mainimage.setAttribute("style", "width:40%;");
                 }
 
+                
+                
+
                 portfolioviewbox.appendChild(mainimage);
                 portfolioviewer.appendChild(portfolioviewbox);
+
+                if (gallery.galleryimages[0].imagebuylink != undefined && gallery.galleryimages[0].imagebuylink != "")
+                {
+                    var purchasebutton = document.createElement("a");
+                    purchasebutton.setAttribute("href", gallery.galleryimages[0].imagebuylink );
+                    purchasebutton.setAttribute("class", "purchasebutton purchasebutton1");
+                    purchasebutton.setAttribute("style", "float:right;")
+                    purchasebutton.text = "Purchase";
+                    portfolioviewer.appendChild(purchasebutton);
+                }
 
                 //add smaller images
                 var portfolioimages = gallery.galleryimages;
@@ -195,7 +219,7 @@ block content
         nav(width="100%", id="nav-galleries")
             each gallery in allgallerynames
                 //-var gid= !={JSON.stringify(mainportfolio.galleryid)}
-                if gallery.galleryid == "2"
+                if gallery.isdefault == true
                     a(href="javascript:void(0)", onclick="viewgallery(this.name);", id="galleryli-"+gallery.galleryid, name=gallery.galleryid, style="display: inlineblock; text-decoration: none; margin-right: 2%; border: 4px solid pink;")=gallery.galleryname
                 else
                     a(href="javascript:void(0)", onclick="viewgallery(this.name);", id="galleryli-"+gallery.galleryid, name=gallery.galleryid, style="display: inlineblock; text-decoration: none; margin-right: 2%;")=gallery.galleryname
@@ -208,14 +232,18 @@ block content
                     if mainportfolio.galleryimages[0].orientation = "L"
                         div(class="portfolioviewboxlandscape")
                             img(src=mainportfolio.galleryimages[0].imagefilepath, alt=mainportfolio.galleryimages[0].imagealt, title=mainportfolio.galleryimages[0].imagealt)
+                        if (mainportfolio.galleryimages[0].imagebuylink != undefined && mainportfolio.galleryimages[0].imagebuylink != "")
+                            a(href=mainportfolio.galleryimages[0].imagebuylink, class="purchasebutton purchasebutton1", style="float:right") Purchase
                     else
                         div(class="portfolioviewboxportrait", style="align-content: center; padding: 5%;")
                             img(src=mainportfolio.galleryimages[0].imagefilepath, alt=mainportfolio.galleryimages[0].imagealt, title=mainportfolio.galleryimages[0].imagealt)
+                        if (mainportfolio.galleryimages[0].imagebuylink != undefined && mainportfolio.galleryimages[0].imagebuylink != "")
+                            a(href=mainportfolio.galleryimages[0].imagebuylink, class="purchasebutton purchasebutton1", style="float:right") Purchase
             div(class="portfolio", id="portfolio")
                 if mainportfolio.galleryimages
                     each val in mainportfolio.galleryimages
                         div(class="gallerythumbnail", style="align-content: center; width: 25%;")
-                            img(id="gt-"+val.imageid, src=val.imagefilepath, alt=val.imagealt, title=val.imagealt, onclick="viewimage(event)")
+                            img(id="gt-"+val.imageid, src=val.imagefilepath, alt=val.imagealt, title=val.imagealt, imagebuylink=val.imagebuylink, onclick="viewimage(event)")
                             //- if loggedin && isadmin && mainportfolio
                             //-     form(name="deleteimage", action="/portfolio/deleteportfolioimage", method="post")
                             //-         input(type="hidden", name="imagefilepath" value=val.imagefilepath)

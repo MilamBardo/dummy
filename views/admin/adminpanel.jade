@@ -32,15 +32,22 @@ block content
                     rows="10"
                 )
             div
-                label Image Caption:
+                label Image Buy Link:
             div
-                textarea(
-                    name="imagecaption", 
-                    cols="90", 
-                    rows="10"
+                input(
+                    type="text",
+                    name="imagebuylink"
                 )
             br
             input(type="submit", value="Add Image")
+            br
+            br
+        form(name="editimage", action="/admin/editimage", method="get")
+            select(name="imagelist")
+                if imagelist != undefined
+                    each val in imagelist
+                        option(value=val.imageid)=val.imagename
+            input(type="submit", value="Edit image")
     br
     div(class="bordereddiv")
         label Galleries
@@ -54,4 +61,9 @@ block content
                     each val in galleries
                         option(value=val.galleryid)=val.galleryname
             input(type="submit", value="Edit gallery")
+    div(class="bordereddiv")
+        label DB Backups
+        br
+        form(name="backupdatabase", action="/admin/backupdatabase", method="get")
+            input(type="submit", value="New Database Backup")
         

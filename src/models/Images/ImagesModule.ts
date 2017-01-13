@@ -6,12 +6,14 @@
         imagefilepath: string;
         imagetitle : string;
         imagealt: string;
+        imagebuylink: string;
         datecreated : Date;
         height : number;
         width : number;
         orientation : string;
         
-        constructor(filename : string, path : string, alt : string, title : string, height : number, width : number)
+        
+        constructor(filename : string, path : string, alt : string, title : string, height : number, width : number, imageid? :number, buylink? : string)
         {
             this.imagename = filename;
             this.imagefilepath = path;
@@ -21,6 +23,9 @@
             this.height = height;
             this.width = width;
             
+            this.imageid = imageid == null ? 0 : imageid;
+            this.imagebuylink = buylink==null ? null : buylink;
+
             if (height == width) 
             {this.orientation = "S";} //square
             else if( height > width )
@@ -61,11 +66,14 @@
         datecreated : Date;
         galleryimages : Array<number>;
         
-        constructor(name : string)
+        constructor(name : string, id? : number, isdefault? : boolean, isprivate? : boolean, datecreated? : Date)
         {
             this.galleryname = name;
-            this.isdefault = false;
-            this.isprivate = false;
+            this.galleryid = id == null ? 0 : id;
+            this.isdefault = isdefault == null ? false : isdefault;
+            this.isprivate = isprivate == null ? false : isprivate;
             this.datecreated = new Date();
         }
+
+        
     }

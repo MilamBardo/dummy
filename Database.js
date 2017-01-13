@@ -72,6 +72,6 @@ var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@l
 
 var client4 = new pg.Client(connectionString);
 client4.connect();
-var query4 = client4.query('ALTER TABLE public.posts ADD postexcerpt character varying (500) NULL')
+var query4 = client4.query('ALTER TABLE public.imageinfos ADD imagebuylink character varying (500) NULL')
 query4.on('end', function() { client4.end(); });
 

@@ -47,7 +47,7 @@ router.post('/fetchGallery', (req:any,res:any) => {
 
             let galleryRepos = new GalleryRepository.galleryRepository();
             const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getgallerybyid(galleryid)); });
-            promise.then((gallery:any) => {
+            promise.then((gallery:Images.Gallery) => {
                 if (gallery != null)
                 {
                     const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getimagesbygalleryid(gallery.galleryid));});
@@ -125,24 +125,7 @@ function displayMainPortfolio (req: any, res: any)
                         gallery.galleryimages= galleryimages;
                         let gallerytotal = galleryimages.length;
 
-                        // let portraits : Array<any> = [];
-                        // let landscapes : Array<any> = [];
-
-                        // for (var item of galleryimages) {
-                        //     if (item.orientation =="L")
-                        //     {
-                        //         landscapes.push(item);
-                        //     }
-                        //     else
-                        //     {
-                        //         portraits.push(item);
-                        //     }
-                        // }
-
-                        //res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin, landscapes : landscapes, portraits: portraits, mainportfolio : gallery, gallerytotal:gallerytotal});
-
-                        //fetch other barebones galleries for display
-                        const promise3 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getallgalleries());});
+                        const promise3 = new Promise.Promise((resolve:any, reject:any) => { resolve(galleryRepos.getallnonprivategalleries());});
                         promise3.then((allgallerynames:any) => {
 
                             res.render('portfolio/portfolio', { title: 'AlmosLataan Portfolio',loggedin : loggedin, isadmin : isadmin,  mainportfolio : gallery, gallerytotal:gallerytotal, allgallerynames: allgallerynames});    

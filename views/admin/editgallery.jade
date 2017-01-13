@@ -187,36 +187,7 @@ block content
                 portfolio.appendChild(newimagediv);
             }
         }
-     form(name="editgallery",  action="/admin/addnewgallery", method="post")
-        div
-            label Gallery Name:
-        div
-            input(
-                type="hidden",name="galleryid",
-                value=gallery.galleryid)
-            input(
-                type="text",
-                name="galleryname",
-                value=gallery.galleryname
-            )
-        div
-            label Gallery is Private?
-        div
-            input(
-                type="checkbox",
-                name="galleryisprivate",
-                value=gallery.isprivate
-                )
-        div
-            label Is Default Gallery?
-        div
-            input(
-                type="checkbox",
-                name="isdefault",
-                value=gallery.isdefault
-            )
-        br
-        input(type="submit", value="Save Gallery")
+     
     if gallery
         div(class="galleryedit", id="galleryedit")
             if galleryimages
@@ -238,4 +209,38 @@ ondragstart="drag(event)")
         br
         p(onclick="saveGallery()") Save gallery
         br
+
+        form(name="editgallery",  action="/admin/editgallery", method="post")
+            div
+                label Gallery Name:
+            div
+                input(
+                    type="hidden",
+                    name="galleryid",
+                    value=gallery.galleryid)
+                input(
+                    type="text",
+                    name="galleryname",
+                    value=gallery.galleryname
+                )
+            div
+                label Gallery is Private?
+            div
+                input(
+                    type="checkbox",
+                    name="galleryisprivate",
+                    checked=(gallery.isprivate==true ? "checked" : undefined)
+                    )
+            div
+                label Is Default Gallery?
+            div
+                input(
+                    type="checkbox",
+                    name="isdefault"
+                    ,
+                    checked=(gallery.isdefault==true ? "checked" : undefined)
+                    
+                )
+            br
+            input(type="submit", value="Save Gallery Edit")
         

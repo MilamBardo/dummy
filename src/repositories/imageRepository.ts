@@ -19,7 +19,7 @@ export class imageRepository
         
         addimageinfo (image: Images.ImageInfo)
         {
-                return this.db.one('INSERT INTO imageinfos(imagename, imagefilepath, imagetitle, imagealt, height, width, orientation, datecreated) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING imageid', [image.imagename, image.imagefilepath, image.imagetitle, image.imagealt, image.height, image.width, image.orientation, image.datecreated]);
+                return this.db.one('INSERT INTO imageinfos(imagename, imagefilepath, imagetitle, imagealt, height, width, orientation, datecreated, imagebuylink) VALUES($1, $2, $3, $4, $5, $6, $7, $8, $9) RETURNING imageid', [image.imagename, image.imagefilepath, image.imagetitle, image.imagealt, image.height, image.width, image.orientation, image.datecreated, image.imagebuylink]);
         };
         
 
@@ -27,7 +27,7 @@ export class imageRepository
         
         updateimageinfo(image : Images.ImageInfo)
         {
-                return this.db.result('UPDATE imageinfos SET imagealt = $1, imagetitle = $2 WHERE imageid = $3', [image.imagealt, image.imagetitle, image.imageid]);
+                return this.db.result('UPDATE imageinfos SET imagealt = $1, imagetitle = $2, imagebuylink = $3 WHERE imageid = $4', [image.imagealt, image.imagetitle, image.imagebuylink, image.imageid]);
         }
 
         
@@ -35,7 +35,30 @@ export class imageRepository
         //GETS
         getimageinfobyimageid(imageid : number)
         {
-                return this.db.oneOrNone('SELECT * FROM imageinfos where imageid = $1', [imageid]);
+                //return this.db.oneOrNone('SELECT * FROM imageinfos where imageid = $1', [imageid]);
+
+                return new Promise( (resolve:any, reject:any) => {resolve(this.db.oneOrNone('SELECT * FROM imageinfos where imageid = $1', [imageid]))}).then((image:any) => {
+                        if (image != null)
+                        {
+                                let mappedimage : Images.ImageInfo;
+                                let imageid:number = image.imageid;
+                                let imagename : string = image.imagename;
+                                let imagefilepath: string = image.imagefilepath;
+                                let imagetitle: string = image.imagetitle;
+                                let imagealt: string = image.imagealt;
+                                let imagedatecreated: Date = image.datecreated;
+                                let height: number = image.height;
+                                let width: number = image.width;
+                                let orientation: string = image.orientation;
+                                let imagebuylink: string = image.imagebuylink;
+                                mappedimage = new Images.ImageInfo(imagename, imagefilepath, imagealt, imagetitle, height, width, imageid, imagebuylink);
+                                return mappedimage;
+                        }
+                        else
+                        {
+                                return null;
+                        }
+                });
         };
         
         getallimages()
