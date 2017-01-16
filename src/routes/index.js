@@ -96,71 +96,70 @@ router.post('/registerprocess', (req, res, next) => {
 });
 router.post('/login', (req, res, next) => {
     try {
-        let gcapture = req.body['g-recaptcha-response'];
-        let userIP = req.connection.remoteAddress;
-        if (gcapture === undefined || gcapture === '' || gcapture === null) {
-            res.render('login', { alertmessage: "Fail on capthcha not selected" });
-        }
-        var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
-        var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
-        var request = require('request');
-        request.post(verificationUrl, { form: { secret: secretKey, response: gcapture, remoteip: userIP } }, function (error, response, body) {
-            body = JSON.parse(body);
-            if (body.success !== undefined && !body.success) {
-                res.render('login', { alertmessage: "Fail on request" });
-            }
-            let suppliedusername = req.body.user;
-            let suppliedpassword = req.body.pass;
-            let usersRepos = new UserRepository.userRepository();
-            const promise = new Promise.Promise((resolve, reject) => { resolve(usersRepos.findany(suppliedusername)); });
-            var bcrypt = require('bcrypt');
-            promise.then((data) => {
-                if (data != null && !data.lockedout) {
-                    bcrypt.compare(suppliedpassword, data.encryptedpassword, function (err, match) {
-                        // res == true
-                        if (err) {
-                            throw err;
-                        }
-                        if (match) {
-                            if (req.session) {
-                                //req.session.user = suppliedusername
-                                req.session.username = data.name;
-                                req.session.userisadmin = data.isadmin;
-                                res.render('index', { title: 'AlmosLataan Home', loggedin: true });
-                            }
-                            else {
-                                res.render('login', { alertmessage: "Problem with logging in to session" });
-                            }
+        //   let gcapture = req.body['g-recaptcha-response'];
+        //   let userIP = req.connection.remoteAddress;
+        //   if(gcapture === undefined || gcapture === '' || gcapture === null) {
+        //     res.render('login', {alertmessage: "Fail on capthcha not selected"});
+        //   }
+        // var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
+        // var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
+        // var request = require('request');
+        // request.post(verificationUrl, {form: {secret: secretKey, response: gcapture, remoteip: userIP}}, function(error : any,response : any ,body : any) {
+        //   body = JSON.parse(body);
+        //   if(body.success !== undefined && !body.success) {
+        //     res.render('login', {alertmessage: "Fail on request"});
+        //   }
+        let suppliedusername = req.body.user;
+        let suppliedpassword = req.body.pass;
+        let usersRepos = new UserRepository.userRepository();
+        const promise = new Promise.Promise((resolve, reject) => { resolve(usersRepos.findany(suppliedusername)); });
+        var bcrypt = require('bcrypt');
+        promise.then((data) => {
+            if (data != null && !data.lockedout) {
+                bcrypt.compare(suppliedpassword, data.encryptedpassword, function (err, match) {
+                    // res == true
+                    if (err) {
+                        throw err;
+                    }
+                    if (match) {
+                        if (req.session) {
+                            //req.session.user = suppliedusername
+                            req.session.username = data.name;
+                            req.session.userisadmin = data.isadmin;
+                            res.render('index', { title: 'AlmosLataan Home', loggedin: true });
                         }
                         else {
-                            //Can't access class method - suspicion is that pg-promise isn't returning real objects
-                            //data.incrementloginattempts(); 
-                            //SO, TEMP FIX
-                            data.loginattempts++;
-                            if (data.loginattempts > 3) {
-                                data.lockedout = true;
-                            }
-                            //NOTICE NO PROMISE
-                            usersRepos.update(data);
-                            res.render('login', { alertmessage: "Login details don't match" });
+                            res.render('login', { alertmessage: "Problem with logging in to session" });
                         }
-                    });
-                }
-                else if (data == null) {
-                    res.render('login', { alertmessage: "Username or password not recognised. " });
-                }
-                else if (data.lockedout) {
-                    res.render('login', { alertmessage: "This account is locked out.  Please request unlock. " });
-                }
-                else {
-                    res.render('login', { alertmessage: "Login details not found" });
-                }
-            });
-            promise.catch((err) => {
-                // This is never called
-                //console.log('I didnt get called:');
-                res.render('login', { alertmessage: "Error when logging in " + err.message });
-            });
+                    }
+                    else {
+                        //Can't access class method - suspicion is that pg-promise isn't returning real objects
+                        //data.incrementloginattempts(); 
+                        //SO, TEMP FIX
+                        data.loginattempts++;
+                        if (data.loginattempts > 3) {
+                            data.lockedout = true;
+                        }
+                        //NOTICE NO PROMISE
+                        usersRepos.update(data);
+                        res.render('login', { alertmessage: "Login details don't match" });
+                    }
+                });
+            }
+            else if (data == null) {
+                res.render('login', { alertmessage: "Username or password not recognised. " });
+            }
+            else if (data.lockedout) {
+                res.render('login', { alertmessage: "This account is locked out.  Please request unlock. " });
+            }
+            else {
+                res.render('login', { alertmessage: "Login details not found" });
+            }
+        });
+        promise.catch((err) => {
+            // This is never called
+            //console.log('I didnt get called:');
+            res.render('login', { alertmessage: "Error when logging in " + err.message });
         });
     }
     catch (err) {
@@ -200,31 +199,34 @@ router.get('/:posttitle/', (req, res) => {
     let suppliedpostid = +postid;
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-    promise.then((post) => {
-        //var post = data;
-        const promisePostImages = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
-        promisePostImages.then((imagedata) => {
-            let mainimage = null;
-            let mainimagefilepath = null;
-            if (imagedata != null && imagedata.length > 0) {
-                mainimage = imagedata[0];
-                mainimagefilepath = "http://almoslataan.com/public/" + imagedata[0].imagefilepath;
-            }
-            //regeneratesitemap();
-            let posturl = "https://almoslataan.com/" + post.posturl + "-" + postid;
-            let fburl = "https%3A%2F%2Falmoslataan.com%2F" + post.posturl + "-" + postid;
-            res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl: fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath });
-        });
-        promisePostImages.catch((err) => {
-            // This is never called
-            //console.log('No posts due to error');
-            res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
-        });
+    let post;
+    let imagedata;
+    let postadverts;
+    promise.then((result) => {
+        post = result;
+        return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+    })
+        .then((result) => {
+        imagedata = result;
+        return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
+    })
+        .then((result) => {
+        postadverts = result;
+        let mainimage = null;
+        let mainimagefilepath = null;
+        if (imagedata != null && imagedata.length > 0) {
+            mainimage = imagedata[0];
+            mainimagefilepath = "https://almoslataan.com/public/" + imagedata[0].imagefilepath;
+        }
+        //regeneratesitemap();
+        let posturl = "https://almoslataan.com/" + post.posturl + "-" + postid;
+        let fburl = "https%3A%2F%2Falmoslataan.com%2F" + post.posturl + "-" + postid;
+        res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl: fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath, postadverts: postadverts });
     });
     promise.catch((err) => {
         // This is never called
         //console.log('No posts due to error');
-        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
+        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' });
     });
 });
 module.exports = router;

@@ -137,21 +137,21 @@ router.post('/login', (req:any, res:any, next: any) =>{
   try
   {
     
-    let gcapture = req.body['g-recaptcha-response'];
-    let userIP = req.connection.remoteAddress;
+  //   let gcapture = req.body['g-recaptcha-response'];
+  //   let userIP = req.connection.remoteAddress;
 
-    if(gcapture === undefined || gcapture === '' || gcapture === null) {
-      res.render('login', {alertmessage: "Fail on capthcha not selected"});
-    }
-  var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
-  var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
+  //   if(gcapture === undefined || gcapture === '' || gcapture === null) {
+  //     res.render('login', {alertmessage: "Fail on capthcha not selected"});
+  //   }
+  // var secretKey = "	6LduwSgTAAAAAJniD0mhwtBc_8V1OHt2BI6z7TYJ";
+  // var verificationUrl = "https://www.google.com/recaptcha/api/siteverify";
 
-  var request = require('request');
-  request.post(verificationUrl, {form: {secret: secretKey, response: gcapture, remoteip: userIP}}, function(error : any,response : any ,body : any) {
-    body = JSON.parse(body);
-    if(body.success !== undefined && !body.success) {
-      res.render('login', {alertmessage: "Fail on request"});
-    }
+  // var request = require('request');
+  // request.post(verificationUrl, {form: {secret: secretKey, response: gcapture, remoteip: userIP}}, function(error : any,response : any ,body : any) {
+  //   body = JSON.parse(body);
+  //   if(body.success !== undefined && !body.success) {
+  //     res.render('login', {alertmessage: "Fail on request"});
+  //   }
 
     let suppliedusername = req.body.user;
     let suppliedpassword = req.body.pass;
@@ -216,7 +216,7 @@ router.post('/login', (req:any, res:any, next: any) =>{
         //console.log('I didnt get called:');
         res.render('login', {alertmessage: "Error when logging in "+err.message});
     });
-  });
+  //});
   
   }
   catch (err)
@@ -266,36 +266,96 @@ router.post('/logout', (req:any, res:any, next: any) =>{
 
     let postRepos = new PostRepository.postRepository();
     const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-    promise.then((post  :Posts.Post) => {
-        //var post = data;
+    let post:Posts.Post;
+    let imagedata  :any;
+    let postadverts:any;
 
-        const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
-        promisePostImages.then((imagedata  :any) => {
-            let mainimage : any = null;
-            let mainimagefilepath : any = null;
-            if (imagedata != null && imagedata.length >0)
-                {
-                    mainimage = imagedata[0];
-                    mainimagefilepath = "http://almoslataan.com/public/"+imagedata[0].imagefilepath;
-                    //mainimagefilepath = imagedata[0].imagefilepath;
-                }
-            //regeneratesitemap();
-            let posturl : string = "https://almoslataan.com/"+post.posturl+"-"+postid;
-            let fburl : string = "https%3A%2F%2Falmoslataan.com%2F"+post.posturl+"-"+postid;
-            res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl : fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
-        });
-        promisePostImages.catch((err : any) => {
-            // This is never called
-            //console.log('No posts due to error');
-            res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
-        });
+    promise.then((result  :Posts.Post) => {
+        post = result;
+
+        return  new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+    })
+    .then((result  :any) => {
+      imagedata = result;
+      return  new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
+      
+    })
+    .then((result  :any) => {
+      postadverts = result;
+
+      let mainimage : any = null;
+      let mainimagefilepath : any = null;
+      if (imagedata != null && imagedata.length >0)
+      {
+          mainimage = imagedata[0];
+          mainimagefilepath = "https://almoslataan.com/public/"+imagedata[0].imagefilepath;
+          //mainimagefilepath = imagedata[0].imagefilepath;
+      }
+      //regeneratesitemap();
+      let posturl : string = "https://almoslataan.com/"+post.posturl+"-"+postid;
+      let fburl : string = "https%3A%2F%2Falmoslataan.com%2F"+post.posturl+"-"+postid;
+
+      res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl : fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath, postadverts:postadverts });
     });
     promise.catch((err : any) => {
         // This is never called
         //console.log('No posts due to error');
-        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
+        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' });
     });
+    
 });
+
+// router.get('/:posttitle/', (req, res) => {
+//     let loggedin = req.session.username == null ? false : true;
+//     let isadmin = req.session.userisadmin == null ? false : true;
+//     let title :string = req.params.posttitle;
+
+//     //Get id from title
+//     let postid : string = "";
+//     for (var i of title)
+//     {
+//       if (i == "-") {
+//         postid = "";
+//       }
+//       else{
+//         postid += i;
+//       }
+//     }
+//     let suppliedpostid = +postid;
+
+//     let postRepos = new PostRepository.postRepository();
+//     const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+//     let post:Posts.Post;
+//     promise.then((result  :Posts.Post) => {
+//         post = result;
+
+//         const promisePostImages = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+//         promisePostImages.then((imagedata  :any) => {
+//             let mainimage : any = null;
+//             let mainimagefilepath : any = null;
+//             if (imagedata != null && imagedata.length >0)
+//                 {
+//                     mainimage = imagedata[0];
+//                     mainimagefilepath = "http://almoslataan.com/public/"+imagedata[0].imagefilepath;
+//                     //mainimagefilepath = imagedata[0].imagefilepath;
+//                 }
+//             //regeneratesitemap();
+//             let posturl : string = "https://almoslataan.com/"+post.posturl+"-"+postid;
+//             let fburl : string = "https%3A%2F%2Falmoslataan.com%2F"+post.posturl+"-"+postid;
+//             res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl : fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath });
+//         });
+//         promisePostImages.catch((err : any) => {
+//             // This is never called
+//             //console.log('No posts due to error');
+//             res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
+//         });
+//     });
+//     promise.catch((err : any) => {
+//         // This is never called
+//         //console.log('No posts due to error');
+//         res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' + err.message + err.stack.toString });
+//     });
+// });
 
 export = router;
 

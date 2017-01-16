@@ -39,6 +39,18 @@ block content
                             Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
                             br
                             Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
+                
+                if postadverts
+                    br
+                    <i>Please help support us by purchasing products through our amazon links:</i>
+                    br
+                    br
+                    div(style="display:inline;")
+                        each val in postadverts
+                            if val.position == "top"
+                                !{val.html}
+
+                br
                 br
                 div(class="fb-share-button", data-href=posturl, data-layout="button_count", data-size="small", data-mobile-iframe="true")
                     a(class="fb-xfbml-parse-ignore", target="_blank", href="https://www.facebook.com/sharer/sharer.php?u="+fburl+"&amp;src=sdkpreparse") Share
@@ -47,5 +59,14 @@ block content
                 br
                 div(class="fb-share-button", data-href=posturl, data-layout="button_count", data-size="small", data-mobile-iframe="true")
                     a(class="fb-xfbml-parse-ignore", target="_blank", href="https://www.facebook.com/sharer/sharer.php?u="+fburl+"&amp;src=sdkpreparse") Share
+                if postadverts
+                    br
+                    br
+                    <i>Please help support us by purchasing products through our amazon links:</i>
+                    br
+                    br
+                    div(style="display:inline;")
+                        each val in postadverts
+                            !{val.html}
             //- div(class="articleAdvertisement" style="width:20%, float:right;display:inline-block; ;")
             //-    img(src="/uploads/Venetian.jpg"  alt="Tiles above and below and Van Gogh Style Tree")

@@ -70,8 +70,28 @@ var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@l
 // var query4 = client4.query('CREATE TABLE  public.tag(tagid SERIAL PRIMARY KEY, tagname character varying(200) NOT NULL)');
 // query4.on('end', function() { client4.end(); });
 
-var client4 = new pg.Client(connectionString);
-client4.connect();
-var query4 = client4.query('ALTER TABLE public.imageinfos ADD imagebuylink character varying (500) NULL')
-query4.on('end', function() { client4.end(); });
+// var client4 = new pg.Client(connectionString);
+// client4.connect();
+// var query4 = client4.query('ALTER TABLE public.imageinfos ADD imagebuylink character varying (500) NULL')
+// query4.on('end', function() { client4.end(); });
+
+// var client1 = new pg.Client(connectionString);
+// client1.connect();
+// var query1 = client1.query('CREATE TABLE public.advertisements (advertisementid SERIAL PRIMARY KEY, name character varying(200) NOT NULL, html character varying(2000) NOT NULL, advertisementtypeid integer NOT NULL, isdeleted boolean NOT NULL DEFAULT false, datecreated timestamp without time zone NOT NULL)');
+// query1.on('end', function() { client1.end(); });
+
+// var client2 = new pg.Client(connectionString);
+// client2.connect();
+// var query2 = client2.query('CREATE TABLE public.postadvertisements (postadvertisementid SERIAL PRIMARY KEY, postid integer NOT NULL, advertisementid integer NOT NULL, position character varying(100) NOT NULL, isdeleted boolean NOT NULL DEFAULT false, datecreated timestamp without time zone NOT NULL)');
+// query2.on('end', function() { client2.end(); });
+
+// var client3 = new pg.Client(connectionString);
+// client3.connect();
+// var query3 = client3.query('CREATE TABLE public.advertisementtypes (advertisementtypeid SERIAL PRIMARY KEY, advertisementtype character varying(200) NOT NULL, isdeleted boolean NOT NULL DEFAULT false, datecreated timestamp without time zone NOT NULL)');
+// query3.on('end', function() { client3.end(); });
+
+// var client4 = new pg.Client(connectionString);
+// client4.connect();
+// var query4 = client4.query('INSERT INTO advertisementtypes(advertisementtype, datecreated) VALUES($1, $2)', ["amazonimagelink", "2017-01-13 23:57:00 CST"]);
+// query4.on('end', function() { client4.end(); });
 

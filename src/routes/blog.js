@@ -3,7 +3,9 @@
 const express = require("express");
 const PostRepository = require("../repositories/postRepository");
 const ImageRepository = require("../repositories/imageRepository");
+const AdvertisementRepository = require("../repositories/advertisementRepository");
 const Posts = require("../models/Posts/PostsModule");
+const Ads = require("../models/Advertisements/AdvertisementsModule");
 const expresssession = require('express-session');
 const Promise = require('es6-promise');
 let router = express.Router();
@@ -49,30 +51,75 @@ router.get('/editpost', (req, res) => {
     if (req.session.username && req.session.userisadmin) {
         let suppliedpostid = req.query.postid;
         let postRepos = new PostRepository.postRepository();
+        let imageRepos = new ImageRepository.imageRepository();
+        let adsRepos = new AdvertisementRepository.advertisementRepository();
+        //This format is due to curretn typescript problems with promise.all.
         const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-        promise.then((post) => {
-            let imageRepos = new ImageRepository.imageRepository();
-            const promise2 = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getimagesbypostid(suppliedpostid)); });
-            promise2.then((postimages) => {
-                const promise3 = new Promise.Promise((resolve, reject) => { resolve(imageRepos.getallimages()); });
-                promise3.then((images) => {
-                    if (postimages == null || postimages.length == 0)
-                        postimages = null;
-                    res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, postimages: postimages, portfolioimages: images });
-                });
-                promise3.catch((err) => {
-                    displayBlog(req, res);
-                });
-            });
-            promise2.catch((err) => {
-                displayBlog(req, res);
-            });
+        let postimages;
+        let post;
+        let images;
+        let adtypes;
+        let adverts;
+        let postadverts;
+        promise.then((result) => {
+            post = result;
+            if (postimages == null || postimages.length == 0)
+                postimages = null;
+            return new Promise.Promise((resolve, reject) => { resolve(imageRepos.getimagesbypostid(suppliedpostid)); });
+        })
+            .then((result) => {
+            postimages = result;
+            return new Promise.Promise((resolve, reject) => { resolve(imageRepos.getallimages()); });
+        })
+            .then((result) => {
+            images = result;
+            return new Promise.Promise((resolve, reject) => { resolve(adsRepos.getalladvertisementtypes()); });
+        })
+            .then((result) => {
+            adtypes = result;
+            return new Promise.Promise((resolve, reject) => { resolve(adsRepos.getalladvertisements()); });
+        })
+            .then((result) => {
+            adverts = result;
+            return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
+        })
+            .then((result) => {
+            postadverts = result;
+            res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, postimages: postimages, portfolioimages: images, adverttypes: adtypes, adverts: adverts, postadverts: postadverts });
         });
         promise.catch((err) => {
             displayBlog(req, res);
         });
     }
 });
+// router.get('/editpost', (req, res) => {
+//     if (req.session.username && req.session.userisadmin)
+//     {
+//         let suppliedpostid = req.query.postid;
+//         let postRepos = new PostRepository.postRepository();
+//         const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+//         promise.then((post:Posts.Post) => {
+//             let imageRepos = new ImageRepository.imageRepository();
+//                 const promise2 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.getimagesbypostid(suppliedpostid)); });
+//                 promise2.then((postimages:any) => { 
+//                     const promise3 = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.getallimages()); });
+//                     promise3.then((images:any) => {
+//                         if (postimages == null || postimages.length == 0) postimages=null;
+//                         res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, postimages: postimages, portfolioimages: images});
+//                     });
+//                     promise3.catch((err : any) => {
+//                         displayBlog(req, res);
+//                     });
+//                 });
+//                 promise2.catch((err : any) => {
+//                     displayBlog(req, res);
+//             });
+//         });
+//         promise.catch((err : any) => {
+//             displayBlog(req, res);
+//         });
+//     }
+// });
 router.post('/editpost', (req, res, next) => {
     let suppliedpostid = req.body.postid;
     let suppliedposttitle = req.body.posttitle;
@@ -168,6 +215,96 @@ router.post('/addpost', (req, res, next) => {
     promise.catch((err) => {
         res.render('index', { title: 'AlmosLataan' });
     });
+});
+//JSON methods
+router.post('/addAdvert', (req, res) => {
+    try {
+        if (req.body) {
+            let advertname = req.body[0].advertname;
+            let adverthtml = req.body[0].adverthtml;
+            let adverttype = req.body[0].adverttype;
+            let advert = new Ads.Advertisement(advertname, adverthtml, adverttype);
+            let adRepos = new AdvertisementRepository.advertisementRepository();
+            const promise = new Promise.Promise((resolve, reject) => { resolve(adRepos.addadvertisement(advert)); });
+            promise.then((result) => {
+                //might be null
+                let success = false;
+                if (result != null && result.advertisementid > 0)
+                    success = true;
+                if (success) {
+                    advert.advertisementid = result.advertisementid;
+                    res.setHeader("Content-Type", "text/json");
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.end(JSON.stringify(advert));
+                }
+                else {
+                    res.setHeader("Content-Type", "text/json");
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.end(JSON.stringify("advert addition was a failue"));
+                }
+            });
+        }
+    }
+    catch (e) {
+        //should really log first;
+        res.setHeader("Content-Type", "text/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        let errorstring = e.message;
+        res.end(JSON.stringify("error when adding amazonad" + errorstring));
+    }
+});
+router.post('/addAdvertToPost', (req, res) => {
+    try {
+        if (req.body) {
+            let postid = req.body[0].postid;
+            let advertid = req.body[0].advertid;
+            let position = req.body[0].position;
+            let postadvert = new Posts.PostAdvertisement(postid, advertid, position);
+            let postRepos = new PostRepository.postRepository();
+            const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.addpostadvertisement(postadvert)); });
+            promise.then((result) => {
+                //might be null
+                let success = false;
+                if (result != null && result.advertisementid > 0)
+                    success = true;
+                if (success) {
+                    postadvert.postadvertisementid = result.postadvertisementid;
+                    res.setHeader("Content-Type", "text/json");
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.end(JSON.stringify(postadvert));
+                }
+                else {
+                    res.setHeader("Content-Type", "text/json");
+                    res.setHeader("Access-Control-Allow-Origin", "*");
+                    res.end(JSON.stringify("postadvert addition was a failue"));
+                }
+            });
+        }
+    }
+    catch (e) {
+        //should really log first;
+        res.setHeader("Content-Type", "text/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        let errorstring = e.message;
+        res.end(JSON.stringify("error when adding postadvert" + errorstring));
+    }
+});
+router.post('/addAdvertToPost', (req, res) => {
+    try {
+        if (req.body) {
+            let postid = req.body[0].postid;
+            let advertid = req.body[0].postid;
+            let position = req.body[0].position;
+            let postadvert = new Posts.PostAdvertisement(postid, advertid, position);
+        }
+    }
+    catch (e) {
+        //should really log first;
+        res.setHeader("Content-Type", "text/json");
+        res.setHeader("Access-Control-Allow-Origin", "*");
+        let errorstring = e.message;
+        res.end(JSON.stringify("error when adding advert to post" + errorstring));
+    }
 });
 ///Will fetch blog entries and render
 function displayBlog(req, res) {

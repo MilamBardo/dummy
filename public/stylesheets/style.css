@@ -35,6 +35,8 @@ g-plusone {margin-left:30%;float:right;}
 
 .formpost { border: 1px solid black; padding: 20px;}
 
+.formpost div { padding: 1%;}
+
 .bioarticle {padding: 10px; margin:auto; }
 /*.bioarticle p{width: 70%;} */
 .articlemainparagraph {font-family: Courier New, Courier, monospace; font-weight: normal;}

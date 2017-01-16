@@ -19,7 +19,7 @@ class Post {
             this.postexcerpt = postExcerpt;
         }
         else {
-            let stringlength = postExcerpt.length < 500 ? postExcerpt.length - 1 : 499;
+            let stringlength = postExcerpt.length < 500 ? postExcerpt.length : 499;
             this.postexcerpt = postExcerpt.substring(0, stringlength);
         }
     }
@@ -39,4 +39,14 @@ class PostImage {
     }
 }
 exports.PostImage = PostImage;
+class PostAdvertisement {
+    constructor(postid, advertisementid, position, postadvertisementid, datecreated) {
+        this.postid = postid;
+        this.advertisementid = advertisementid;
+        this.position = position;
+        this.postadvertisementid = postadvertisementid == null ? null : postadvertisementid;
+        this.datecreated = datecreated == null ? new Date() : datecreated;
+    }
+}
+exports.PostAdvertisement = PostAdvertisement;
 //# sourceMappingURL=PostsModule.js.map

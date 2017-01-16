@@ -1,5 +1,6 @@
 /// <reference path="../Images/ImagesModule.ts"/>
 import * as Images from "../Images/ImagesModule"
+import * as Advertisements from "../Advertisements/AdvertisementsModule"
 
 export class Post {
     id : number;
@@ -37,7 +38,7 @@ export class Post {
     }
     else 
     {
-      let stringlength : number = postExcerpt.length < 500 ? postExcerpt.length - 1 : 499;
+      let stringlength : number = postExcerpt.length < 500 ? postExcerpt.length : 499;
       this.postexcerpt = postExcerpt.substring(0, stringlength);
     }
   }
@@ -76,4 +77,23 @@ export class PostImage {
     this.sizecontrollingdimension = "width";
     this.sizecontrollingpercentage = "50%";
   }
+}
+
+export class PostAdvertisement {
+
+  postadvertisementid : number;
+  postid : number;
+  advertisementid : number;
+  position : string;
+  datecreated : Date;
+
+    constructor(postid : number, advertisementid : number, position : string, postadvertisementid? : number, datecreated? : Date) {
+      this.postid = postid;
+      this.advertisementid = advertisementid;
+      this.position = position;
+
+      this.postadvertisementid = postadvertisementid == null ? null : postadvertisementid;
+      this.datecreated = datecreated == null ? new Date() : datecreated;
+    }
+
 }

@@ -15,6 +15,9 @@ class postRepository {
         return this.db.one('INSERT INTO postimages(postid, imageid, postimagecaption, sizecontrollingdimension, sizecontrollingpercentage, imagetype, imagetypeorder, datecreated) VALUES($1, $2, $3, $4, $5, $6, $7, $8) RETURNING postimageid', [postimage.postid, postimage.imageid, postimage.postimagecaption, postimage.sizecontrollingdimension, postimage.sizecontrollingpercentage, postimage.imagetype, postimage.imagetypeorder, postimage.datecreated]);
     }
     ;
+    addpostadvertisement(postadvertisement) {
+        return this.db.one('INSERT INTO postadvertisements(postid, advertisementid,  position, datecreated) VALUES($1, $2, $3, $4) RETURNING postadvertisementid', [postadvertisement.postid, postadvertisement.advertisementid, postadvertisement.position, postadvertisement.datecreated]);
+    }
     //UPDATES
     updatepostimage(postimage) {
         //hacky - should really be using postimageid, but need to figureout how to map objects properly
@@ -54,6 +57,11 @@ class postRepository {
     getallposts() {
         return this.db.manyOrNone('select * from posts');
     }
+    ;
+    getpostadvertisementsforselect(postid) {
+        return this.db.manyOrNone('SELECT pa.postadvertisementid, a.name, a.html, pa.position FROM postadvertisements pa INNER JOIN advertisements a ON pa.advertisementid = a.advertisementid  WHERE pa.isdeleted=false and a.isdeleted = false and pa.postid = $1', [postid]);
+    }
+    ;
     //DELETES
     deletepostimage(postimageid) {
         return this.db.result('DELETE FROM postimages WHERE postimageid = $1', [postimageid]);
