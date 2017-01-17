@@ -103,7 +103,7 @@ block content
                 )
             div
                 label PostImage
-                if postimages != undefined
+                if (postimages != undefined && postimages != null && postimages.count > 0)
                     input(type="hidden", name="currentpostimage" value=postimages[0].postimageid)
                     select(name="associatedpostimage")
                         option(value="none") No image selected
@@ -119,7 +119,7 @@ block content
                                     option(value=val.imageid)=val.imagename
             div
                 Label Image caption:
-                if postimages != undefined
+                if (postimages != undefined && postimages != null && postimages.count > 0)
                     textarea(
                         name="imagecaption", 
                         cols="70", 

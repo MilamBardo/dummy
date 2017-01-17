@@ -43,7 +43,7 @@ class postRepository {
     }
     ;
     getpostimagesbypostid(postid) {
-        return this.db.manyOrNone('SELECT pi.*, i.imagefilepath, i.imagealt, i.imagetitle FROM postimages pi inner join imageinfos i on pi.imageid = i.imageid WHERE postid =$1', [postid]);
+        return this.db.manyOrNone('SELECT pi.*, i.imagefilepath, i.imagebuylink, i.imagealt, i.imagetitle FROM postimages pi inner join imageinfos i on pi.imageid = i.imageid WHERE postid =$1', [postid]);
     }
     ;
     getpostimagebypostimageid(postimageid) {

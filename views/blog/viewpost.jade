@@ -29,26 +29,29 @@ block content
                         time= (moment(post.postdate).format('MMM Do YYYY'))
                     
                 if mainimage
-                    div(class="articleimage")
+                    div(class="articleimage", style="display:inline")
                         if mainimage.orientation=="L"
                             img(class="articlelandscapeimage", src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
                         else
-                            img(class="articleportraitimage", src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle) 
+                            img(class="articleportraitimage", src=mainimage.imagefilepath, alt=mainimage.imagealt, title=mainimage.imagetitle)
+                        if mainimage.imagebuylink != null &&  mainimage.imagebuylink != ""
+                            a(href=mainimage.imagebuylink, class="purchasebutton purchasebutton1") Purchase Print
                         if mainimage.postimagecaption != undefined
-                            br
+                            
                             Label(style="font-size: 0.75em;")!="<i>"+mainimage.imagetitle+"</i>"
                             br
                             Label(style="font-size: 0.75em;")!=mainimage.postimagecaption
+                    
                 
                 if postadverts
-                    br
-                    <i>Please help support us by purchasing products through our amazon links:</i>
-                    br
-                    br
-                    div(style="display:inline;")
-                        each val in postadverts
-                            if val.position == "top"
-                                !{val.html}
+                    div(style="float:right;")
+                        <i>Please help support us by purchasing products through our amazon links:</i>
+                        br
+                        br
+                        div(style="display:inline;")
+                            each val in postadverts
+                                if val.position == "top"
+                                    !{val.html}
 
                 br
                 br
