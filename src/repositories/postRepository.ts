@@ -61,9 +61,9 @@ export class postRepository
         {
                 return this.db.one('SELECT * FROM postimages WHERE postimageid =$1',[postimageid]);
         };
-        getmostrecentposts(postnumber: number)
+        getmostrecentposts(postnumber: number, datepriorto : Date)
         {
-            return this.db.manyOrNone('select p.*, i.imagefilepath, i.imagealt, i.orientation, pi.postimagecaption from posts p left join postimages pi on p.id=pi.postid left join imageinfos i on pi.imageid = i.imageid order by p.postdate desc limit $1', postnumber);
+            return this.db.manyOrNone('select p.* , p.postdate::timestamptz as posttimestamp, i.imagefilepath, i.imagealt, i.orientation, pi.postimagecaption from posts p left join postimages pi on p.id=pi.postid left join imageinfos i on pi.imageid = i.imageid WHERE p.postdate < $1::timestamptz  order by p.postdate desc limit $2', [datepriorto, postnumber]);
         };
         getallposts()
         {

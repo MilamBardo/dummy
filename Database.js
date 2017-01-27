@@ -95,3 +95,14 @@ var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@l
 // var query4 = client4.query('INSERT INTO advertisementtypes(advertisementtype, datecreated) VALUES($1, $2)', ["amazonimagelink", "2017-01-13 23:57:00 CST"]);
 // query4.on('end', function() { client4.end(); });
 
+var client4 = new pg.Client(connectionString);
+client4.connect();
+var query4 = client4.query('ALTER TABLE public.posts ALTER COLUMN postdate SET DATA TYPE timestamp with time zone');
+query4.on('end', function() { client4.end(); });
+
+var client5 = new pg.Client(connectionString);
+client5.connect();
+var query5 = client5.query("UPDATE public.posts SET postdate = postdate - ('6 hours'::interval)");
+query5.on('end', function() { client5.end(); });
+
+
