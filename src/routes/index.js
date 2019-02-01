@@ -186,48 +186,50 @@ router.get('/:posttitle/', (req, res) => {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
     let title = req.params.posttitle;
-    //Get id from title
-    let postid = "";
-    for (var i of title) {
-        if (i == "-") {
-            postid = "";
+    if (title != "favicon.ico") {
+        //Get id from title
+        let postid = "";
+        for (var i of title) {
+            if (i == "-") {
+                postid = "";
+            }
+            else {
+                postid += i;
+            }
         }
-        else {
-            postid += i;
-        }
+        let suppliedpostid = +postid;
+        let postRepos = new PostRepository.postRepository();
+        const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+        let post;
+        let imagedata;
+        let postadverts;
+        promise.then((result) => {
+            post = result;
+            return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+        })
+            .then((result) => {
+            imagedata = result;
+            return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
+        })
+            .then((result) => {
+            postadverts = result;
+            let mainimage = null;
+            let mainimagefilepath = null;
+            if (imagedata != null && imagedata.length > 0) {
+                mainimage = imagedata[0];
+                mainimagefilepath = "https://almoslataan.com/public/" + imagedata[0].imagefilepath;
+            }
+            //regeneratesitemap();
+            let posturl = "https://almoslataan.com/" + post.posturl + "-" + postid;
+            let fburl = "https%3A%2F%2Falmoslataan.com%2F" + post.posturl + "-" + postid;
+            res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl: fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath, postadverts: postadverts });
+        });
+        promise.catch((err) => {
+            // This is never called
+            //console.log('No posts due to error');
+            res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' });
+        });
     }
-    let suppliedpostid = +postid;
-    let postRepos = new PostRepository.postRepository();
-    const promise = new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-    let post;
-    let imagedata;
-    let postadverts;
-    promise.then((result) => {
-        post = result;
-        return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
-    })
-        .then((result) => {
-        imagedata = result;
-        return new Promise.Promise((resolve, reject) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
-    })
-        .then((result) => {
-        postadverts = result;
-        let mainimage = null;
-        let mainimagefilepath = null;
-        if (imagedata != null && imagedata.length > 0) {
-            mainimage = imagedata[0];
-            mainimagefilepath = "https://almoslataan.com/public/" + imagedata[0].imagefilepath;
-        }
-        //regeneratesitemap();
-        let posturl = "https://almoslataan.com/" + post.posturl + "-" + postid;
-        let fburl = "https%3A%2F%2Falmoslataan.com%2F" + post.posturl + "-" + postid;
-        res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl: fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath, postadverts: postadverts });
-    });
-    promise.catch((err) => {
-        // This is never called
-        //console.log('No posts due to error');
-        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' });
-    });
 });
 module.exports = router;
 //# sourceMappingURL=index.js.map

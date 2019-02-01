@@ -13,7 +13,7 @@ let router = express.Router();
         
 router.get('/', (req, res) => {
     try{
-        displayBlog(req,res, new Date())
+        displayBlog(req,res, new Date(), true);
     }
     catch (err)
     {
@@ -22,10 +22,10 @@ router.get('/', (req, res) => {
 
 });
 
-router.get('/startdate/:startdate', (req, res) => {
+router.get('/getnextpage/:startdate', (req, res) => {
     try{
-        var datelessthan : Date = new Date(req.params.startdate);
-        displayBlog(req,res, datelessthan)
+        var startdate : Date = new Date(req.params.startdate);
+        displayBlog(req,res, startdate, true)
     }
     catch (err)
     {
@@ -33,6 +33,20 @@ router.get('/startdate/:startdate', (req, res) => {
     }
 
 });
+
+router.get('/getpreviouspage/:previousstartdate/', (req, res) => {
+    try{
+        var startdate : Date = new Date(req.params.previousstartdate);
+        displayBlog(req,res, startdate, false)
+    }
+    catch (err)
+    {
+        throw new Error("caught an error")
+    }
+
+});
+
+
 
 //reoutes needed
 router.get('/:posttitle/:postnumber/', (req, res) => {
@@ -118,7 +132,7 @@ router.get('/editpost', (req, res) => {
             res.render('blog/editpost', { title: 'AlmosLataan Edit Post', loggedin: true, isadmin: true, post: post, postimages: postimages, portfolioimages: images, adverttypes: adtypes, adverts: adverts, postadverts : postadverts});
         });
         promise.catch((err : any) => {
-            displayBlog(req, res, new Date());
+            displayBlog(req, res, null, true);
         });
         
     }
@@ -191,10 +205,12 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                             const promiseDeletePostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.deletepostimage(currentpostimageid)); });
                             promiseDeletePostImage.then((deletedpostimage:any) => {
                                 regeneratesitemap();
-                                displayBlog(req, res, new Date());
+                                var newdate = new Date();
+                                displayBlog(req, res, newdate, true);
                             });
                             promiseDeletePostImage.catch((err : any) => {
-                                displayBlog(req, res, new Date());
+                                var newdate = new Date();
+                                displayBlog(req, res, newdate, true);
                             });
                         }
                         else 
@@ -209,10 +225,12 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                                 const promiseUpdatePostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.updatepostimage(fetchedpostimage)); });
                                 promiseUpdatePostImage.then((fetchedpostimage:any) => {
                                     regeneratesitemap();
-                                    displayBlog(req, res, new Date());
+                                    var newdate = new Date();
+                                    displayBlog(req, res, newdate, true);
                                 });
                                 promiseUpdatePostImage.catch((err : any) => {
-                                    displayBlog(req, res, new Date());
+                                    var newdate = new Date();
+                                    displayBlog(req, res, newdate, true);
                                 });
                             });
                             promiseFetchPostImage.catch((err : any) => {
@@ -231,16 +249,18 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
                         const promiseInsertPostImage = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.addpostimage(postimagenew)); });
                         promiseInsertPostImage.then((postimageresult:any) => {
                             regeneratesitemap();
-                            displayBlog(req, res, new Date());
+                            var newdate = new Date();
+                            displayBlog(req, res,  newdate, true);
                         });
                         promiseInsertPostImage.catch((err : any) => {
-                            displayBlog(req, res, new Date());
+                            displayBlog(req, res,  new Date(), true);
                         });
                 }
                 else
                 {
                     regeneratesitemap();
-                  displayBlog(req, res, new Date());  
+                  var newdate = new Date();
+                    displayBlog(req, res, newdate, true);
                 }
 
             });
@@ -249,7 +269,7 @@ router.post('/editpost', (req:any, res:any, next: any) =>{
             });
         });
         promise.catch((err : any) => {
-            displayBlog(req, res, new Date());
+        displayBlog(req, res, new Date(), true);
         });
         
 });
@@ -266,7 +286,8 @@ router.post('/addpost', (req:any, res:any, next: any) =>{
     
     promise.then((data:any) => {
         regeneratesitemap();
-        displayBlog(req, res, new Date());
+        var newdate = new Date();
+        displayBlog(req, res, newdate, true);
     });
     promise.catch((err : any) => {
         res.render('index', { title: 'AlmosLataan' });
@@ -387,40 +408,52 @@ router.post('/addAdvertToPost', (req:any,res:any) => {
     }
 });
 ///Will fetch blog entries and render
-function displayBlog (req: any, res: any, datelessthan : Date)
+function displayBlog (req: any, res: any, startdate : Date, greaterthanstartdate : boolean)
 {
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
 
     let postRepos = new PostRepository.postRepository();
 
+    if (greaterthanstartdate)
+    {
+        startdate.setSeconds(startdate.getSeconds()+1); 
+    }
+    else 
+    { 
+        startdate.setSeconds(startdate.getSeconds()-1);
+    }
+    
     //var datei = new Date();
     //var n = datelessthan.toISOString();
-    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getmostrecentposts(11, datelessthan)); });
+    const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(postRepos.getposts(11, startdate, greaterthanstartdate)); });
     promise.then((data:any) => {
         var blogPosts = data;
-        for (var item of blogPosts)
+        if (blogPosts != null)
         {
-            let max = 1500;
-            if (item.postbody.length < 1499)
+            for (var item of blogPosts)
             {
-                max = item.postbody.length;
+                let max = 1500;
+                if (item.postbody.length < 1499)
+                {
+                    max = item.postbody.length;
+                }
+                item.postbody = item.postbody.substring(0, max);
+                item.postbody = item.postbody +"..."
             }
-            item.postbody = item.postbody.substring(0, max);
-            item.postbody = item.postbody +"..."
         }
         let morepostsavailable : boolean = false;
         //let lastpostdate : Date = null;
-        var lastpostdate = null;
-        if (data.length == 11)
+        var lastpostdate : Date = null;
+        if (data != null && data.length == 11)
         {
             morepostsavailable = true;
-            lastpostdate = blogPosts[9].posttimestamp
+            lastpostdate = greaterthanstartdate ? blogPosts[9].posttimestamp : blogPosts[0].posttimestamp 
             //.toISOString();
             //removes last value from array so that lastpostdate will represent 10th item.
             blogPosts.pop();
         }
-        res.render('blog/blog', { title: 'AlmosLataan Blog', loggedin: loggedin, isadmin: isadmin, posts: blogPosts, morepostsavailable : morepostsavailable, lastpostdate : lastpostdate });
+        res.render('blog/blog', { title: 'AlmosLataan Blog', loggedin: loggedin, isadmin: isadmin, posts: blogPosts, morepostsavailable : morepostsavailable, startdate : lastpostdate, previousstartdate : startdate });
         
     });
     promise.catch((err:Error) => {

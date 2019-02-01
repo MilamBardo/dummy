@@ -37,4 +37,6 @@ block content
                         else
                             a(href ="/"+val.posttitle+"-"+val.id) Read More
         if morepostsavailable
-            a(href ="/blog/startdate/"+lastpostdate, style="float:right") Next Page
+            a(href ="/blog/getnextpage/"+startdate, style="float:right") Next Page
+        if previousstartdate != null && previousstartdate != undefined
+            a(href ="/blog/getpreviouspage/"+previousstartdate, style="float:right") Previous Page

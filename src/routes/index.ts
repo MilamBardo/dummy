@@ -250,59 +250,60 @@ router.post('/logout', (req:any, res:any, next: any) =>{
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
     let title :string = req.params.posttitle;
-
-    //Get id from title
-    let postid : string = "";
-    for (var i of title)
+    if (title != "favicon.ico")
     {
-      if (i == "-") {
-        postid = "";
-      }
-      else{
-        postid += i;
-      }
-    }
-    let suppliedpostid = +postid;
-
-    let postRepos = new PostRepository.postRepository();
-    const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
-    let post:Posts.Post;
-    let imagedata  :any;
-    let postadverts:any;
-
-    promise.then((result  :Posts.Post) => {
-        post = result;
-
-        return  new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
-    })
-    .then((result  :any) => {
-      imagedata = result;
-      return  new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
-      
-    })
-    .then((result  :any) => {
-      postadverts = result;
-
-      let mainimage : any = null;
-      let mainimagefilepath : any = null;
-      if (imagedata != null && imagedata.length >0)
+      //Get id from title
+      let postid : string = "";
+      for (var i of title)
       {
-          mainimage = imagedata[0];
-          mainimagefilepath = "https://almoslataan.com/public/"+imagedata[0].imagefilepath;
-          //mainimagefilepath = imagedata[0].imagefilepath;
+        if (i == "-") {
+          postid = "";
+        }
+        else{
+          postid += i;
+        }
       }
-      //regeneratesitemap();
-      let posturl : string = "https://almoslataan.com/"+post.posturl+"-"+postid;
-      let fburl : string = "https%3A%2F%2Falmoslataan.com%2F"+post.posturl+"-"+postid;
+      let suppliedpostid = +postid;
 
-      res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl : fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath, postadverts:postadverts });
-    });
-    promise.catch((err : any) => {
-        // This is never called
-        //console.log('No posts due to error');
-        res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' });
-    });
-    
+      let postRepos = new PostRepository.postRepository();
+      const promise = new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostbyid(suppliedpostid)); });
+      let post:Posts.Post;
+      let imagedata  :any;
+      let postadverts:any;
+
+      promise.then((result  :Posts.Post) => {
+          post = result;
+
+          return  new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostimagesbypostid(suppliedpostid)); });
+      })
+      .then((result  :any) => {
+        imagedata = result;
+        return  new Promise.Promise((resolve : any, reject : any) => { resolve(postRepos.getpostadvertisementsforselect(suppliedpostid)); });
+        
+      })
+      .then((result  :any) => {
+        postadverts = result;
+
+        let mainimage : any = null;
+        let mainimagefilepath : any = null;
+        if (imagedata != null && imagedata.length >0)
+        {
+            mainimage = imagedata[0];
+            mainimagefilepath = "https://almoslataan.com/public/"+imagedata[0].imagefilepath;
+            //mainimagefilepath = imagedata[0].imagefilepath;
+        }
+        //regeneratesitemap();
+        let posturl : string = "https://almoslataan.com/"+post.posturl+"-"+postid;
+        let fburl : string = "https%3A%2F%2Falmoslataan.com%2F"+post.posturl+"-"+postid;
+
+        res.render('blog/viewpost', { title: post.posttitle, posturl: posturl, fburl : fburl, loggedin: loggedin, isadmin: isadmin, post: post, mainimage : mainimage, mainimagefilepath : mainimagefilepath, postadverts:postadverts });
+      });
+      promise.catch((err : any) => {
+          // This is never called
+          //console.log('No posts due to error');
+          res.render('blog/blog', { title: 'AlmosLataan Blog', alertmessage: 'Problem loading post.  Please contact if issue continues' });
+      });
+    }
 });
 
 // router.get('/:posttitle/', (req, res) => {

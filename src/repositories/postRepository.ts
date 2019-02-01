@@ -61,9 +61,16 @@ export class postRepository
         {
                 return this.db.one('SELECT * FROM postimages WHERE postimageid =$1',[postimageid]);
         };
-        getmostrecentposts(postnumber: number, datepriorto : Date)
+        getposts(postnumber: number, startdate : Date, greaterthanstartdate : boolean )
         {
-            return this.db.manyOrNone('select p.* , p.postdate::timestamptz as posttimestamp, i.imagefilepath, i.imagealt, i.orientation, pi.postimagecaption from posts p left join postimages pi on p.id=pi.postid left join imageinfos i on pi.imageid = i.imageid WHERE p.postdate < $1::timestamptz  order by p.postdate desc limit $2', [datepriorto, postnumber]);
+                if (greaterthanstartdate)
+                {
+                        return this.db.manyOrNone('select p.* , p.postdate::timestamptz as posttimestamp, i.imagefilepath, i.imagealt, i.orientation, pi.postimagecaption from posts p left join postimages pi on p.id=pi.postid left join imageinfos i on pi.imageid = i.imageid WHERE p.postdate < $1::timestamptz  order by p.postdate desc limit $2', [startdate, postnumber]);
+                }
+                else{
+                        return this.db.manyOrNone('select * from (select p.* , p.postdate::timestamptz as posttimestamp, i.imagefilepath, i.imagealt, i.orientation, pi.postimagecaption from posts p left join postimages pi on p.id=pi.postid left join imageinfos i on pi.imageid = i.imageid WHERE p.postdate > $1::timestamptz  order by p.postdate asc limit $2)cunt order by postdate desc ', [startdate, postnumber]);
+                        //need to change select so that 
+                }
         };
         getallposts()
         {
