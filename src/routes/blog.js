@@ -1,5 +1,5 @@
-/// <reference path='../../typings/index.d.ts'/>
 "use strict";
+/// <reference path='../../typings/index.d.ts'/>
 const express = require("express");
 const PostRepository = require("../repositories/postRepository");
 const ImageRepository = require("../repositories/imageRepository");
@@ -53,6 +53,7 @@ router.get('/:posttitle/:postnumber/', (req, res) => {
                 if (imagedata != null && imagedata.length > 0) {
                     mainimage = imagedata[0];
                     mainimagefilepath = "http://almoslataan.com/public/" + imagedata[0].imagefilepath;
+                    //mainimagefilepath = imagedata[0].imagefilepath;
                 }
                 //regeneratesitemap();
                 res.render('blog/viewpost', { title: post.posttitle, loggedin: loggedin, isadmin: isadmin, post: post, mainimage: mainimage, mainimagefilepath: mainimagefilepath });

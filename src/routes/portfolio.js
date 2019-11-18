@@ -1,5 +1,5 @@
-/// <reference path='../../typings/index.d.ts'/>
 "use strict";
+/// <reference path='../../typings/index.d.ts'/>
 const express = require("express");
 const GalleryRepository = require("../repositories/galleryRepository");
 const Images = require("../models/Images/ImagesModule");

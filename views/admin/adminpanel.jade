@@ -1,6 +1,8 @@
 extends ../layout
 
 block content
+    if errmsg
+        p=errmsg
     div(class="bordereddiv")
         label Image Uploads
         br

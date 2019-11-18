@@ -1,6 +1,7 @@
+"use strict";
 /// <reference path='../../typings/globals/pgpromise/pg-promise.d.ts' />
 /// <reference path='../../typings/index.d.ts'/>
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Images = require("../models/Images/ImagesModule");
 //import * as GalleryImages from '../models/Images/GalleryImage';
 const dbProvider = require("../../db");

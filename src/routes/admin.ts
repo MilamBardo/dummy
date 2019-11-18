@@ -68,6 +68,8 @@ router.post('/uploadimage', upload.single('file'), (req:any, res:any, next: any)
     let loggedin = req.session.username == null ? false : true;
     let isadmin = req.session.userisadmin == null ? false : true;
 
+    try
+    {
     if (loggedin && isadmin)
     {
         let imagename = req.body.imagename;
@@ -82,42 +84,61 @@ router.post('/uploadimage', upload.single('file'), (req:any, res:any, next: any)
         let tempPath = req.file.path;
         let tempBasename = path.basename(tempPath);
         let savePath = /uploads/ + imagename + '.jpg'
+        //LOCAL
         let targetPath = path.resolve('./public/uploads/'+imagename+'.jpg');
+        //LIVE
+        //let targetPath = path.resolve('./apps/Almos/public/uploads/'+imagename+'.jpg');
         if (path.extname(req.file.originalname).toLowerCase() === '.jpg') {
 
             var sizeOf = require('image-size');
-                sizeOf(tempPath, function (err : any, dimensions : any) {
-                        if (err) throw err;
+                //sizeOf(tempPath, function (err : any, dimensions : any) {
+                        //if (err) throw err;
                         
-                        var imgwidth= dimensions.width;
-                        var imgheight= dimensions.height;
+                         var dimensions = sizeOf(tempPath);
+                         var imgwidth= dimensions.width;
+                         var imgheight= dimensions.height;
+                         
+                         if( imgwidth>200 && imgheight>200)
+                         {
+                             let imageRepos = new ImageRepository.imageRepository();
+                             //displayadminpanel(req,res, "pastimageRepos. temppath="+tempPath+" targetpath="+targetPath);
+                             fs.rename(tempPath, targetPath, function(err : any) {
+                                // if (err) throw err;
+                                  //displayadminpanel(req,res, "past fs rename. temppath="+tempPath+" targetpath="+targetPath);
+                                 let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle, imgheight, imgwidth, imagebuylink);
+                                 const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.addimageinfo(imageinfo)); });
+                                     promise.then((imageresult:any) => {
+                                                 displayadminpanel(req,res, null);
+                                     promise.catch((err : any) => {
+                        //                 //throw err;
+                                         displayadminpanel(req,res, "error on sql addimageinfo");
+                                         });
+                                     });
+                             });
+                         }
+                         else
+                         {
+                             displayadminpanel(req,res, "image width and height not greater than");
+                         }
 
-                        if( imgwidth>200 && imgheight>200)
-                        {
-                            let imageRepos = new ImageRepository.imageRepository();
-                            fs.rename(tempPath, targetPath, function(err : any) {
-                                if (err) throw err;
-
-                                let imageinfo = new Images.ImageInfo(imagename, savePath, alttext, imagetitle, imgheight, imgwidth, imagebuylink);
-                                const promise = new Promise.Promise((resolve:any, reject:any) => { resolve(imageRepos.addimageinfo(imageinfo)); });
-                                    promise.then((imageresult:any) => {
-                                                displayadminpanel(req,res, null);
-                                    promise.catch((err : any) => {
-                                        throw err;
-                                        });
-                                    });
-                                });
-                        }
-
-                });
+                //});
         } 
         else {
             fs.unlink(tempPath, function (err:any) {
                 if (err) throw err;
                 console.error("Only .jpg files are allowed!");
             });
+            displayadminpanel(req,res, "path not equal to jpg");
         }
     }
+    else{
+        displayadminpanel(req,res, "either notlogged in or not admin");
+    }
+}
+catch(error)
+{
+    displayadminpanel(req,res, "error caught");
+}
 });
 
 router.get('/editimage', (req, res) => {

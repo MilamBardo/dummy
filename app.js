@@ -1,5 +1,6 @@
-/// <reference path='./typings/index.d.ts'/>
 "use strict";
+/// <reference path='./typings/index.d.ts'/>
+Object.defineProperty(exports, "__esModule", { value: true });
 const path = require("path");
 const express = require("express");
 // import * as favicon from 'serve-favicon';

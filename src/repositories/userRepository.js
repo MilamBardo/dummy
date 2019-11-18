@@ -1,6 +1,7 @@
+"use strict";
 //import sqlProvider = require('../sql');
 //var sql = sqlProvider.products;
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Users = require("../models/Users/User");
 const dbProvider = require("../../db");
 class userRepository {

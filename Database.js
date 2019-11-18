@@ -6,9 +6,7 @@ var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@l
 //Local2 Almos
 //var connectionString = process.env.DATABASE_URL || 'postgres://Almos:Talanath5@127.0.0.1:5432/Almos';
 
-//Local3 NodeUser Talanath5
-//LIVE
-//var connectionString = process.env.DATABASE_URL || 'postgres://nodeuser:Talanath5@127.0.0.1:5432/Almos';
+
 
 // var client1 = new pg.Client(connectionString);
 // client1.connect();

@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Advertisement {
     constructor(name, adhtml, advertisementtypeid, id, datecreated) {
         this.name = name;

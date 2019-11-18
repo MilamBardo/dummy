@@ -161,9 +161,11 @@ router.post('/login', (req, res, next) => {
             //console.log('I didnt get called:');
             res.render('login', { alertmessage: "Error when logging in " + err.message });
         });
+        //});
     }
     catch (err) {
         res.render('login', { alertmessage: "Error when logging in.  Internal issue - please report" });
+        //throw err;
     }
 });
 router.post('/logout', (req, res, next) => {
@@ -218,6 +220,7 @@ router.get('/:posttitle/', (req, res) => {
             if (imagedata != null && imagedata.length > 0) {
                 mainimage = imagedata[0];
                 mainimagefilepath = "https://almoslataan.com/public/" + imagedata[0].imagefilepath;
+                //mainimagefilepath = imagedata[0].imagefilepath;
             }
             //regeneratesitemap();
             let posturl = "https://almoslataan.com/" + post.posturl + "-" + postid;

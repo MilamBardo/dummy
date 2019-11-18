@@ -1,6 +1,7 @@
+"use strict";
 /// <reference path='../../typings/globals/pgpromise/pg-promise.d.ts' />
 /// <reference path='../../typings/index.d.ts'/>
-"use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 const Ads = require("../models/Advertisements/AdvertisementsModule");
 const dbProvider = require("../../db");
 class advertisementRepository {

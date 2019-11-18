@@ -1,4 +1,5 @@
 "use strict";
+Object.defineProperty(exports, "__esModule", { value: true });
 class Post {
     //postimages: Array< ImageInfo>;
     //_postimage : Images.ImageInfo;

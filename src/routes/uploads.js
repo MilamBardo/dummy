@@ -1,5 +1,5 @@
-/// <reference path='../../typings/index.d.ts'/>
 "use strict";
+/// <reference path='../../typings/index.d.ts'/>
 const express = require("express");
 const expresssession = require('express-session');
 const Promise = require('es6-promise');
